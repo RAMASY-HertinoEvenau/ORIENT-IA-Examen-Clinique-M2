@@ -23,6 +23,20 @@ scripts/       Commandes reproductibles
 documentation/ Decisions, methodologie et limites
 ```
 
+## Corpus pédagogique Phase 1
+
+Le corpus vérifié est disponible dans
+[donnees/corpus_pedagogique.json](donnees/corpus_pedagogique.json) et son
+périmètre est décrit dans
+[documentation/phase-1-corpus.md](documentation/phase-1-corpus.md). Il contient
+uniquement les mentions, parcours, niveaux, compétences, conditions d'accès et
+le débouché ISAIA effectivement publiés par l'ISPM le 26 août 2026.
+
+Les matières principales, les passerelles et les débouchés non publiés restent
+absents. Les matières de concours de l'annuaire externe ne sont pas utilisées
+comme matières de formation. L'habilitation ministérielle annoncée par l'ISPM
+n'a pas été vérifiée par un acte officiel indépendant.
+
 ## Installation locale
 
 Python 3.11 ou plus recent est requis.

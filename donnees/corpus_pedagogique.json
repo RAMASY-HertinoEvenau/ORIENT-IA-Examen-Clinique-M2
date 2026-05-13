@@ -1,0 +1,119 @@
+{
+  "version": "2026.08.26",
+  "statut": "partiel_verifie_institutionnel",
+  "avertissement": "Ce corpus reproduit uniquement des informations publiees par l'ISPM. Il ne constitue pas une verification independante des habilitations.",
+  "sources": [
+    {
+      "identifiant": "ispm-presentation",
+      "titre": "Presentation de l'ISPM",
+      "origine": "Institut Superieur Polytechnique de Madagascar",
+      "url": "http://www.ispm-edu.com/presentation.php",
+      "date_consultation": "2026-08-26",
+      "statut": "institutionnel",
+      "section": "PRESENTATION DE L'ISPM",
+      "extrait": "formation habilitee ... a BACC+3 (Licence) et a BACC+5 (Master) dans les mentions suivantes",
+      "donnees_extraites": "Niveaux, diplomes, mentions et parcours.",
+      "limites": "La page ne fournit ni numero ni date d'acte d'habilitation, ni maquette de formation.",
+      "incertitudes": "L'habilitation ministérielle n'a pas ete verifiee par un acte officiel independant."
+    },
+    {
+      "identifiant": "ispm-filieres",
+      "titre": "Les differents departements et filieres",
+      "origine": "Institut Superieur Polytechnique de Madagascar",
+      "url": "http://www.ispm-edu.com/filieres.php",
+      "date_consultation": "2026-08-26",
+      "statut": "institutionnel",
+      "section": "LES DIFFERENTS DEPARTEMENTS ET FILIERES",
+      "extrait": "Descriptions des filieres IGGLIA, ESIIA, IMTICIA et ISAIA.",
+      "donnees_extraites": "Departements, descriptions de finalites, competences generales et debouche ISAIA.",
+      "limites": "La page ne fournit pas de referentiel exhaustif de competences, de maquette de matieres ou de passerelles.",
+      "incertitudes": "Le contenu est anciennement date par les actualites visibles sur le site; sa date de mise a jour n'est pas indiquee."
+    },
+    {
+      "identifiant": "ispm-inscription",
+      "titre": "Conditions d'acces en premiere annee",
+      "origine": "Institut Superieur Polytechnique de Madagascar",
+      "url": "http://www.ispm-edu.com/inscription.php",
+      "date_consultation": "2026-08-26",
+      "statut": "institutionnel",
+      "section": "CONDITIONS D'ACCES EN PREMIERE ANNEE",
+      "extrait": "L'acces en premiere annee se fait par voie de selection de dossier des candidats titulaires du baccalaureat.",
+      "donnees_extraites": "Baccalaureat, selection de dossier, pieces demandees et series admises par departement.",
+      "limites": "Les conditions de poursuite d'etudes et de changement de parcours ne sont pas documentees.",
+      "incertitudes": "La page ne donne pas de date de validite des conditions."
+    },
+    {
+      "identifiant": "annuaire-mg-ispm",
+      "titre": "Fiche ISPM",
+      "origine": "Annuaire de Madagascar",
+      "url": "https://annuaire.mg/ispm/",
+      "date_consultation": "2026-08-26",
+      "statut": "externe",
+      "section": "Informatique et Telecommunication; inscription au concours",
+      "extrait": "La fiche mentionne des parcours, des diplomes, des matieres de concours et des conditions d'acces.",
+      "donnees_extraites": "Elements de corroboration et contradictions sur les diplomes et le mode d'admission.",
+      "limites": "Annuaire prive; les informations ne sont pas emises directement par l'ISPM.",
+      "incertitudes": "Les informations contradictoires ne sont pas integrees comme faits institutionnels."
+    }
+  ],
+  "mentions": [
+    {"identifiant": "mention-informatique-telecommunications", "nom": "Informatique et Telecommunications", "parcours": ["parcours-igglia", "parcours-esiia", "parcours-imticia", "parcours-isaia"], "sources": ["ispm-presentation"]},
+    {"identifiant": "mention-genie-industriel", "nom": "Genie Industriel", "parcours": ["parcours-emii", "parcours-icmp"], "sources": ["ispm-presentation"]},
+    {"identifiant": "mention-genie-civil-architecture", "nom": "Genie Civil et Architecture", "parcours": ["parcours-gca"], "sources": ["ispm-presentation"]},
+    {"identifiant": "mention-droit-techniques-affaires", "nom": "Droit et Techniques des Affaires", "parcours": ["parcours-caa", "parcours-emp", "parcours-fic", "parcours-dtja"], "sources": ["ispm-presentation"]},
+    {"identifiant": "mention-biotechnologie-agronomie", "nom": "Biotechnologie et Agronomie", "parcours": ["parcours-iaa", "parcours-aee", "parcours-pip"], "sources": ["ispm-presentation"]},
+    {"identifiant": "mention-tourisme", "nom": "Tourisme", "parcours": ["parcours-tee", "parcours-teh"], "sources": ["ispm-presentation"]}
+  ],
+  "formations": [
+    {"identifiant": "formation-licence", "nom": "Licence", "mentions": ["mention-informatique-telecommunications", "mention-genie-industriel", "mention-genie-civil-architecture", "mention-droit-techniques-affaires", "mention-biotechnologie-agronomie", "mention-tourisme"], "niveau": "BACC+3", "sources": ["ispm-presentation"]},
+    {"identifiant": "formation-master", "nom": "Master", "mentions": ["mention-informatique-telecommunications", "mention-genie-industriel", "mention-genie-civil-architecture", "mention-droit-techniques-affaires", "mention-biotechnologie-agronomie", "mention-tourisme"], "niveau": "BACC+5", "sources": ["ispm-presentation"]}
+  ],
+  "parcours": [
+    {"identifiant": "parcours-igglia", "nom": "Informatique de Gestion Genie Logiciel et Intelligence Artificielle (IGGLIA)", "competences": ["competence-techniques-informatiques-gestion"], "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "sources": ["ispm-presentation", "ispm-filieres", "ispm-inscription"]},
+    {"identifiant": "parcours-esiia", "nom": "Electronique Systeme Informatique et Intelligence Artificielle (ESIIA)", "competences": ["competence-electronique-systemes"], "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "sources": ["ispm-presentation", "ispm-filieres", "ispm-inscription"]},
+    {"identifiant": "parcours-imticia", "nom": "Informatique Multimedia Technologie de l'Information et de la Communication et Intelligence Artificielle (IMTICIA)", "competences": ["competence-multimedia-telecommunications"], "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "sources": ["ispm-presentation", "ispm-filieres", "ispm-inscription"]},
+    {"identifiant": "parcours-isaia", "nom": "Informatique Statistique Appliquee et Intelligence Artificielle (ISAIA)", "competences": ["competence-statistiques-informatique"], "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "metiers": ["metier-isaia-economie"], "sources": ["ispm-presentation", "ispm-filieres", "ispm-inscription"]},
+    {"identifiant": "parcours-emii", "nom": "Electro-Mecanique et Informatique Industrielle (EMII)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "sources": ["ispm-presentation", "ispm-inscription"]},
+    {"identifiant": "parcours-icmp", "nom": "Industries Chimiques, Minieres et Petrolieres (ICMP)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "sources": ["ispm-presentation", "ispm-inscription"]},
+    {"identifiant": "parcours-gca", "nom": "Genie Civil et Architecture (GCA)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier"], "sources": ["ispm-presentation", "ispm-inscription"]},
+    {"identifiant": "parcours-caa", "nom": "Commerce et Administration des Affaires (CAA)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]},
+    {"identifiant": "parcours-emp", "nom": "Economie et Management de Projet (EMP)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]},
+    {"identifiant": "parcours-fic", "nom": "Finances et Comptabilites (FIC)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]},
+    {"identifiant": "parcours-dtja", "nom": "Droit et Techniques Juridiques des Affaires (DTJA)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]},
+    {"identifiant": "parcours-iaa", "nom": "Industrie Agroalimentaire (IAA)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-agronomie"], "sources": ["ispm-presentation", "ispm-inscription"]},
+    {"identifiant": "parcours-aee", "nom": "Agriculture et Elevage (AEE)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-agronomie"], "sources": ["ispm-presentation", "ispm-inscription"]},
+    {"identifiant": "parcours-pip", "nom": "Pharmacologie et Industries Pharmaceutiques (PIP)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-agronomie"], "sources": ["ispm-presentation", "ispm-inscription"]},
+    {"identifiant": "parcours-tee", "nom": "Tourisme et Environnement (TEE)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]},
+    {"identifiant": "parcours-teh", "nom": "Tourisme et Hotellerie (TEH)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]}
+  ],
+  "matieres": [],
+  "competences": [
+    {"identifiant": "competence-techniques-informatiques-gestion", "nom": "Techniques informatiques relatives a la gestion des entreprises", "description": "Maitriser les techniques informatiques relatives a la gestion des entreprises.", "sources": ["ispm-filieres"]},
+    {"identifiant": "competence-electronique-systemes", "nom": "Electronique, structure des ordinateurs et applications informatiques", "description": "Maitriser a la fois l'electronique, la structure des ordinateurs et les applications fondamentales de l'informatique.", "sources": ["ispm-filieres"]},
+    {"identifiant": "competence-multimedia-telecommunications", "nom": "Informatique multimedia et telecommunications", "description": "Se former a l'informatique multimedia, a la telecommunication et aux nouvelles technologies de l'information et de la communication.", "sources": ["ispm-filieres"]},
+    {"identifiant": "competence-statistiques-informatique", "nom": "Methodes statistiques et informatiques appliquees a l'economie", "description": "Appliquer des methodes statistiques avec des methodes informatiques dans divers domaines de l'economie.", "sources": ["ispm-filieres"]}
+  ],
+  "prerequis": [
+    {"identifiant": "prerequis-baccalaureat", "description": "Etre titulaire du baccalaureat pour acceder en premiere annee.", "obligatoire": true, "sources": ["ispm-inscription"]},
+    {"identifiant": "prerequis-selection-dossier", "description": "Acces en premiere annee par selection de dossier.", "obligatoire": true, "sources": ["ispm-inscription"]},
+    {"identifiant": "prerequis-series-informatique", "description": "Baccalaureats C, D, S et techniques industrielles pour le departement Informatique et Telecommunication.", "obligatoire": true, "sources": ["ispm-inscription"]},
+    {"identifiant": "prerequis-series-affaires-tourisme", "description": "Baccalaureat toute serie pour les departements Techniques des Affaires et Techniques du tourisme.", "obligatoire": true, "sources": ["ispm-inscription"]},
+    {"identifiant": "prerequis-agronomie", "description": "Baccalaureats C, D, S, techniques agricoles et A2 avec une note de mathematiques superieure ou egale a 12 pour le departement Biotechnologie et Agronomie.", "obligatoire": true, "sources": ["ispm-inscription"]}
+  ],
+  "metiers": [
+    {"identifiant": "metier-isaia-economie", "nom": "Emploi dans les banques, entreprises industrielles et entreprises commerciales", "description": "Debouches explicitement cites pour ISAIA.", "sources": ["ispm-filieres"]}
+  ],
+  "passerelles": [],
+  "contradictions": [
+    {"sujet": "organisation-genie", "source_a": "ispm-presentation", "source_b": "ispm-filieres", "description": "La presentation separe les mentions Genie Industriel et Genie Civil et Architecture; la page des filieres regroupe leurs departements dans une formulation combinee.", "decision": "Aucune fusion ni correction arbitraire; les mentions de la presentation sont conservees comme telles."},
+    {"sujet": "admission", "source_a": "ispm-inscription", "source_b": "annuaire-mg-ispm", "description": "Le site ISPM parle de selection de dossier; l'annuaire externe parle de concours.", "decision": "La selection de dossier est retenue comme information institutionnelle; la version concours reste secondaire et non integree."},
+    {"sujet": "diplomes", "source_a": "ispm-presentation", "source_b": "annuaire-mg-ispm", "description": "L'annuaire externe mentionne Ingenieur et Doctorat en plus de Licence; la presentation consultee annonce Licence et Master.", "decision": "Seuls Licence et Master sont integres; Ingenieur et Doctorat restent non confirmes."}
+  ],
+  "informations_absentes": [
+    "Matieres principales des formations",
+    "Referentiel exhaustif de competences",
+    "Debouches par parcours sauf ISAIA",
+    "Passerelles entre parcours",
+    "Acte officiel independant d'habilitation"
+  ]
+}
