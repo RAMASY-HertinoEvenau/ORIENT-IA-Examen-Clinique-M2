@@ -9,6 +9,10 @@ from orient_ia.ml.featurisation import (
     configurations_ablations,
     separer_cible,
 )
+from orient_ia.ml.validation_croisee import (
+    configurations_candidats,
+    executer_validation_croisee,
+)
 
 __all__ = [
     "COLONNES_ENTREE",
@@ -17,5 +21,7 @@ __all__ = [
     "FeaturiseurML",
     "charger_splits",
     "configurations_ablations",
+    "configurations_candidats",
+    "executer_validation_croisee",
     "separer_cible",
 ]
