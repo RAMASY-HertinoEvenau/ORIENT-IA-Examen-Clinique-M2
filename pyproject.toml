@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orient-ia"
+version = "0.1.0"
+description = "Prototype explicable d'aide a l'orientation pedagogique"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.7,<3",
+]
+
+[project.scripts]
+orient-ia = "orient_ia.__main__:main"
+
+[project.optional-dependencies]
+developpement = [
+    "pytest>=8.0,<9",
+    "pytest-cov>=5.0,<6",
+    "ruff>=0.6,<1",
+]
+
+[tool.setuptools.packages.find]
+include = ["orient_ia*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

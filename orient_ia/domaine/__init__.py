@@ -1,0 +1,1 @@
+"""Objets et services portant les regles metier d'ORIENT'IA."""

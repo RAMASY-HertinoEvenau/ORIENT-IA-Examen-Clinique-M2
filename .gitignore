@@ -1,0 +1,31 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+.env
+.coverage
+htmlcov/
+documentation/
+
+# Données et artefacts générés localement
+donnees/traitees/*
+donnees/traitees/!.gitkeep
+ml/modeles/*
+ml/modeles/!.gitkeep
+rag/indexation/*
+rag/indexation/!.gitkeep
+
+# Notebooks avec sorties locales
+.ipynb_checkpoints/
+
+# Fichiers système et IDE
+.DS_Store
+Thumbs.db
+.vscode/settings.jsondocumentation/
+
