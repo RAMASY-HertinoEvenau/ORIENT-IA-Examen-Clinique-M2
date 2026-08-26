@@ -9,6 +9,8 @@ description = "Prototype explicable d'aide a l'orientation pedagogique"
 requires-python = ">=3.11"
 dependencies = [
     "pydantic>=2.7,<3",
+    "pandas>=2.0,<3",
+    "matplotlib>=3.7,<4",
 ]
 
 [project.scripts]

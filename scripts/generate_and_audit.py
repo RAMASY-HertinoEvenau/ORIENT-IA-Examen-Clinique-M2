@@ -18,7 +18,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--n", type=int, default=2000)
     p.add_argument("--seed", type=int, default=42)
-    p.add_argument("--out", type=str, default="data/full_sample_2000")
+    p.add_argument("--out", type=str, default="data/full_sample_2000_v2")
     args = p.parse_args()
 
     corpus = Path("donnees/corpus_pedagogique.json")

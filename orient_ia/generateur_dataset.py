@@ -5,15 +5,16 @@ et génère des profils candidats synthétiques, reproductibles et documentés.
 
 Principes:
 - Ne modifie pas le corpus.
-- Utilise uniquement les identifiants de parcours/compétences réels pour la cible
-  et certaines variables liées aux compétences.
+- Utilise uniquement les identifiants de parcours/compétences réels issus du corpus.
 - Toutes les autres variables synthétiques sont clairement marquées comme telles
   dans la documentation.
 """
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
+import math
 import random
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -101,7 +102,7 @@ class GenerateurDataset:
             type="Dict[str,int]",
             signification="Score synthétique (0-5) pour chaque compétence; clés = identifiants de compétences institutionnelles quand disponibles",
             utilisation_ml="Features numériques pour chaque compétence institutionnelle",
-            provenance="mixte: compétences réelles du corpus si présentes, sinon synthétique"
+            provenance="variable synthétique de simulation; clés limitées aux compétences du corpus"
         ))
 
         s.append(SchemaVariable(
@@ -144,16 +145,16 @@ class GenerateurDataset:
             signification="Identifiant du parcours choisi (cible ML)",
             valeurs_possibles=self.parcours,
             utilisation_ml="Cible (label) - une seule valeur parmi les parcours du corpus",
-            provenance="corpus_institutionnel"
+            provenance="variable synthétique de simulation; identifiant issu du corpus"
         ))
 
         return s
 
     def _sample_competences(self, rng: random.Random) -> dict[str, int]:
-        # Pour chaque compétence réelle du corpus, attribuer un score 0-5 (entier)
+        # Les scores sont simulés; aucun référentiel de compétence n'est enrichi.
         d: dict[str, int] = {}
         for comp in self.competences_reelles:
-            # distribution simple: la plupart ont 1-4, rare 5, possible 0
+            # Distribution simple: scores entiers de 0 à 5.
             p = rng.random()
             if p < 0.05:
                 score = 0
@@ -163,6 +164,68 @@ class GenerateurDataset:
                 score = 5
             d[comp] = score
         return d
+
+    @staticmethod
+    def _stable_unit(*parts: str) -> float:
+        payload = "|".join(parts).encode("utf-8")
+        digest = hashlib.sha256(payload).digest()
+        return int.from_bytes(digest[:8], "big") / 2**64
+
+    def _score_simulation(
+        self,
+        parcours: dict,
+        moyenne: float,
+        competences: dict[str, int],
+        centres: list[str],
+        projets: list[str],
+        preference: str,
+        environnement: str,
+    ) -> float:
+        """Calcule une utilité latente, non officielle, pour le choix simulé."""
+        pid = parcours["identifiant"]
+        score = -0.25 + 0.5 * self._stable_unit("prior", pid)
+        score += (moyenne - 12.5) / 20.0 * (self._stable_unit("grade", pid) - 0.5)
+        for interest in centres:
+            score += (self._stable_unit("interest", pid, interest) - 0.5) * 0.35
+        for project in projets:
+            score += (self._stable_unit("project", pid, project) - 0.5) * 0.15
+        score += (self._stable_unit("preference", pid, preference) - 0.5) * 0.3
+        score += (self._stable_unit("environment", pid, environnement) - 0.5) * 0.2
+        for competence in parcours.get("competences", []):
+            score += competences.get(competence, 0) / 5.0 * 0.12
+        return score
+
+    def _tirer_parcours_cible(
+        self,
+        rng: random.Random,
+        moyenne: float,
+        competences: dict[str, int],
+        centres: list[str],
+        projets: list[str],
+        preference: str,
+        environnement: str,
+    ) -> str:
+        """Tire une cible selon une utilité softmax perturbée par un bruit caché."""
+        utilities = [
+            self._score_simulation(
+                parcours,
+                moyenne,
+                competences,
+                centres,
+                projets,
+                preference,
+                environnement,
+            )
+            for parcours in self.corpus.get("parcours", [])
+        ]
+        temperature = 0.9
+        noisy_utilities = []
+        for utility in utilities:
+            uniform = max(rng.random(), 1e-12)
+            gumbel_noise = -math.log(-math.log(uniform)) * temperature
+            noisy_utilities.append(utility + gumbel_noise)
+        index = max(range(len(noisy_utilities)), key=noisy_utilities.__getitem__)
+        return self.parcours[index]
 
     def generer(self, n: int, seed: int, repartition: tuple[float, float, float] = (0.7, 0.15, 0.15), out_dir: Path | None = None) -> dict[str, Path]:
         """Génère `n` profils et écrit train/val/test dans `out_dir`.
@@ -201,24 +264,15 @@ class GenerateurDataset:
             prefs = rng.choice(["entrepreneuriat", "salariat", "recherche", "enseignement", "fonction_publique"])
             env = rng.choice(["bureau", "terrain", "teletravail", "hybride"])
 
-            # Choix du parcours cible: simple modèle probabiliste conditionnel sur compétences/moyenne
-            # Pour rester simple et éviter d'inventer correspondances officielles, on attribue
-            # un score de compatibilité entre candidat et chaque parcours basé sur la moyenne
-            # et les compétences pertinentes (si le parcours mentionne des compétences réelles).
-            scores = {}
-            for p in self.corpus.get("parcours", []):
-                pid = p["identifiant"]
-                related = p.get("competences", [])
-                # base score from moyenne
-                score = moyenne / 20.0
-                # add competence match
-                if related:
-                    avg_comp = sum(competences.get(c, 0) for c in related) / (len(related) * 5.0)
-                    score += avg_comp * 0.5
-                scores[pid] = score
-
-            # normalize and pick argmax
-            cible = max(scores.items(), key=lambda kv: kv[1])[0]
+            cible = self._tirer_parcours_cible(
+                rng,
+                moyenne,
+                competences,
+                centres,
+                projets,
+                prefs,
+                env,
+            )
 
             row = {
                 "id_candidat": cid,
@@ -265,6 +319,9 @@ class GenerateurDataset:
 
         # metadata
         meta = {
+            "dataset_version": "v2",
+            "generation_method": "utilite_synthetique_softmax_bruit_cache",
+            "simulation_warning": "La cible est synthetique et ne represente pas une verite sur des etudiants reels.",
             "n_total": n_total,
             "repartition": {
                 "train": len(train_idx),
@@ -315,7 +372,16 @@ class GenerateurDataset:
                 except json.JSONDecodeError:
                     errors.append(f"Competences JSON invalide pour {cid} dans {p}")
 
-                # target vérification
+                try:
+                    competences = json.loads(comp_raw) if comp_raw else {}
+                except json.JSONDecodeError:
+                    competences = {}
+                if set(competences) != set(self.competences_reelles):
+                    errors.append(f"Ensemble de competences invalide pour {cid} dans {p}")
+                if any(not isinstance(value, int) or not 0 <= value <= 5 for value in competences.values()):
+                    errors.append(f"Score de competence hors plage pour {cid} dans {p}")
+
+                # target verification
                 cible = r.get("parcours_cible")
                 if cible not in self.parcours:
                     errors.append(f"Parcours cible inconnu pour {cid}: {cible}")
