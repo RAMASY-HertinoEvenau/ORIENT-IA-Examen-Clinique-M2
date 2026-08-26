@@ -1,0 +1,34 @@
+{
+  "n_total": 2000,
+  "counts": {
+    "train": 1400,
+    "val": 300,
+    "test": 300
+  },
+  "class_distribution": {
+    "parcours-igglia": 761,
+    "parcours-esiia": 557,
+    "parcours-isaia": 283,
+    "parcours-imticia": 399
+  },
+  "missing_counts": {
+    "id_candidat": 0,
+    "matieres_preferees": 0,
+    "moyenne_scolaire": 0,
+    "competences": 0,
+    "centres_interet": 0,
+    "projets": 1181,
+    "preferences_professionnelles": 0,
+    "environnement_travail": 0,
+    "parcours_cible": 0
+  },
+  "duplicates": 0,
+  "validation_errors": [],
+  "paths": {
+    "train": "data\\full_sample_2000\\train.csv",
+    "val": "data\\full_sample_2000\\val.csv",
+    "test": "data\\full_sample_2000\\test.csv",
+    "meta": "data\\full_sample_2000\\metadata.json"
+  },
+  "seed": 42
+}

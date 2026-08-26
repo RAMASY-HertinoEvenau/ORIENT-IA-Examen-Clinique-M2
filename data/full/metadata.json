@@ -1,0 +1,120 @@
+{
+  "n_total": 1000,
+  "repartition": {
+    "train": 700,
+    "val": 150,
+    "test": 150
+  },
+  "seed": 2026,
+  "schema": [
+    {
+      "nom": "id_candidat",
+      "type": "str",
+      "signification": "Identifiant interne synthétique du candidat",
+      "valeurs_possibles": null,
+      "unite": null,
+      "utilisation_ml": "Index; non utilisé comme feature",
+      "provenance": "synthetique"
+    },
+    {
+      "nom": "matieres_preferees",
+      "type": "List[str]",
+      "signification": "Liste de matières préférées du candidat (synthétique)",
+      "valeurs_possibles": null,
+      "unite": null,
+      "utilisation_ml": "Feature textuelle/catégorielle (embeddings ou one-hot)",
+      "provenance": "synthetique - pas de matières institutionnelles dans le corpus"
+    },
+    {
+      "nom": "moyenne_scolaire",
+      "type": "float",
+      "signification": "Moyenne générale sur 20 lors du dernier diplôme obtenu",
+      "valeurs_possibles": null,
+      "unite": "/20",
+      "utilisation_ml": "Feature numérique (normalisation)",
+      "provenance": "synthetique - simulée"
+    },
+    {
+      "nom": "competences",
+      "type": "Dict[str,int]",
+      "signification": "Score synthétique (0-5) pour chaque compétence; clés = identifiants de compétences institutionnelles quand disponibles",
+      "valeurs_possibles": null,
+      "unite": null,
+      "utilisation_ml": "Features numériques pour chaque compétence institutionnelle",
+      "provenance": "mixte: compétences réelles du corpus si présentes, sinon synthétique"
+    },
+    {
+      "nom": "centres_interet",
+      "type": "List[str]",
+      "signification": "Centres d'intérêt personnels (liste synthétique)",
+      "valeurs_possibles": null,
+      "unite": null,
+      "utilisation_ml": "Feature textuelle/catégorielle",
+      "provenance": "synthetique"
+    },
+    {
+      "nom": "projets",
+      "type": "List[str]",
+      "signification": "Projets personnels ou scolaires (mots-clés synthétiques)",
+      "valeurs_possibles": null,
+      "unite": null,
+      "utilisation_ml": "Feature textuelle",
+      "provenance": "synthetique"
+    },
+    {
+      "nom": "preferences_professionnelles",
+      "type": "str",
+      "signification": "Secteur ou rôle professionnel privilégié",
+      "valeurs_possibles": [
+        "entrepreneuriat",
+        "salariat",
+        "recherche",
+        "enseignement",
+        "fonction_publique"
+      ],
+      "unite": null,
+      "utilisation_ml": "Feature catégorielle",
+      "provenance": "synthetique"
+    },
+    {
+      "nom": "environnement_travail",
+      "type": "str",
+      "signification": "Préférence pour le mode de travail",
+      "valeurs_possibles": [
+        "bureau",
+        "terrain",
+        "teletravail",
+        "hybride"
+      ],
+      "unite": null,
+      "utilisation_ml": "Feature catégorielle",
+      "provenance": "synthetique"
+    },
+    {
+      "nom": "parcours_cible",
+      "type": "str",
+      "signification": "Identifiant du parcours choisi (cible ML)",
+      "valeurs_possibles": [
+        "parcours-igglia",
+        "parcours-esiia",
+        "parcours-imticia",
+        "parcours-isaia",
+        "parcours-emii",
+        "parcours-icmp",
+        "parcours-gca",
+        "parcours-caa",
+        "parcours-emp",
+        "parcours-fic",
+        "parcours-dtja",
+        "parcours-iaa",
+        "parcours-aee",
+        "parcours-pip",
+        "parcours-tee",
+        "parcours-teh"
+      ],
+      "unite": null,
+      "utilisation_ml": "Cible (label) - une seule valeur parmi les parcours du corpus",
+      "provenance": "corpus_institutionnel"
+    }
+  ]
+}
