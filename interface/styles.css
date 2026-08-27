@@ -223,12 +223,31 @@ body::before {
   gap: 10px;
 }
 
-/* Dashboard Grid (3 colonnes modernes) */
+/* Dashboard Grid (3 colonnes modernes côte à côte) */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 360px 1fr 300px;
-  gap: 24px;
+  grid-template-columns: 310px minmax(360px, 1fr) 380px;
+  gap: 20px;
   align-items: start;
+}
+
+.col-profile {
+  display: flex;
+  flex-direction: column;
+}
+
+.col-recommendations {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.col-assistant {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 80px;
 }
 
 /* Card base */
@@ -237,7 +256,7 @@ body::before {
   border: 1px solid var(--slate-200);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-  padding: 24px;
+  padding: 22px;
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 

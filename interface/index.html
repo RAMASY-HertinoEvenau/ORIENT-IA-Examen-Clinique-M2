@@ -45,7 +45,7 @@
           <span class="hero-badge-spark">✦</span> Guide d'orientation interactif
         </div>
         <h1 class="hero-title">Trouvez la filière qui correspond à <span class="gradient-text">votre avenir</span>.</h1>
-        <p class="hero-desc">Sélectionnez vos centres d'intérêt et vos préférences. ORIENT'IA analyse l'ensemble des 16 parcours officiels de l'ISPM pour vous orienter avec clarté et précision.</p>
+        <p class="hero-desc">Sélectionnez vos centres d'intérêt et posez vos questions en direct à l'assistant pour comparer les filières ISPM.</p>
       </section>
 
       <div class="demo-banner" id="demo-notice" hidden>
@@ -53,121 +53,123 @@
         <span>Mode local : les réponses sont simulées en attendant la connexion au serveur.</span>
       </div>
 
-      <!-- Grille Principale Intuitive -->
+      <!-- Grille Principale Ergonomique (3 colonnes visibles simultanément) -->
       <div class="dashboard-grid">
-        <!-- Colonne 1 : Profil Candidat (Formulaire simple et clair) -->
-        <aside class="profile-card">
-          <div class="card-header">
-            <div class="step-badge">1</div>
-            <div>
-              <h2>Votre Profil</h2>
-              <p class="card-subtitle">Renseignez quelques repères simples</p>
+        
+        <!-- Colonne 1 : Profil Candidat -->
+        <aside class="col-profile">
+          <div class="card profile-card">
+            <div class="card-header">
+              <div class="step-badge">1</div>
+              <div>
+                <h2>Votre Profil</h2>
+                <p class="card-subtitle">Repères simples et personnalisables</p>
+              </div>
             </div>
+
+            <form id="profile-form" class="profile-form">
+              <!-- Niveau -->
+              <div class="form-group">
+                <label class="form-label" for="niveau">Niveau d’étude visé <span class="req">*</span></label>
+                <div class="select-wrapper">
+                  <select id="niveau" name="niveau" required>
+                    <option value="Baccalauréat">Nouveau Bachelier (Entrée en 1ère année)</option>
+                    <option value="Licence">Licence (BACC+3)</option>
+                    <option value="Master">Master (BACC+5)</option>
+                    <option value="En réflexion">En réflexion / Orientation</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Centres d'intérêt interactifs -->
+              <div class="form-group">
+                <label class="form-label">Centres d’intérêt majeurs</label>
+                <div class="interest-chips">
+                  <label class="chip">
+                    <input type="checkbox" name="centres_interet" value="informatique">
+                    <span class="chip-content"><span class="chip-icon">💻</span> Informatique</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="centres_interet" value="management">
+                    <span class="chip-content"><span class="chip-icon">💼</span> Management</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="centres_interet" value="écologie">
+                    <span class="chip-content"><span class="chip-icon">🌿</span> Écologie</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="centres_interet" value="santé">
+                    <span class="chip-content"><span class="chip-icon">🩺</span> Santé & Pharma</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="centres_interet" value="agriculture">
+                    <span class="chip-content"><span class="chip-icon">🌾</span> Agriculture</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="centres_interet" value="design">
+                    <span class="chip-content"><span class="chip-icon">🏛️</span> BTP & Archi</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="centres_interet" value="robotique">
+                    <span class="chip-content"><span class="chip-icon">⚙️</span> Électronique</span>
+                  </label>
+                  <label class="chip">
+                    <input type="checkbox" name="centres_interet" value="finance">
+                    <span class="chip-content"><span class="chip-icon">📊</span> Finance</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Matières -->
+              <div class="form-group">
+                <label class="form-label" for="matieres">Matières préférées / Points forts</label>
+                <input id="matieres" name="matieres_preferees" type="text" placeholder="Ex. maths, SVT, physique, anglais...">
+              </div>
+
+              <!-- Compétences / Projets -->
+              <div class="form-group">
+                <label class="form-label" for="competences">Ce que vous aimez faire</label>
+                <textarea id="competences" name="competences" rows="2" placeholder="Ex. programmation, dessin, gestion, TP..."></textarea>
+              </div>
+
+              <!-- Préférences -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="preference">Aspiration</label>
+                  <select id="preference" name="preferences_professionnelles">
+                    <option value="">Indifférent</option>
+                    <option value="Salariat">Salariat / Ingénieur</option>
+                    <option value="Entrepreneuriat">Entrepreneuriat</option>
+                    <option value="Recherche">Recherche & R&D</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="environnement">Cadre</label>
+                  <select id="environnement" name="environnement_travail">
+                    <option value="">Indifférent</option>
+                    <option value="Bureau">Bureau / Tech</option>
+                    <option value="Terrain">Terrain</option>
+                    <option value="Hybride">Hybride</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn-primary" type="submit" id="btn-analyser">
+                <span>Analyser mon profil</span>
+                <span class="btn-icon" aria-hidden="true">→</span>
+              </button>
+            </form>
           </div>
-
-          <form id="profile-form" class="profile-form">
-            <!-- Niveau -->
-            <div class="form-group">
-              <label class="form-label" for="niveau">Niveau d’étude visé <span class="req">*</span></label>
-              <div class="select-wrapper">
-                <select id="niveau" name="niveau" required>
-                  <option value="Baccalauréat">Nouveau Bachelier (Entrée en 1ère année)</option>
-                  <option value="Licence">Licence (BACC+3)</option>
-                  <option value="Master">Master (BACC+5)</option>
-                  <option value="En réflexion">En réflexion / Orientation</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Centres d'intérêt interactifs -->
-            <div class="form-group">
-              <label class="form-label">Centres d’intérêt majeurs</label>
-              <div class="interest-chips">
-                <label class="chip">
-                  <input type="checkbox" name="centres_interet" value="informatique">
-                  <span class="chip-content"><span class="chip-icon">💻</span> Informatique & IA</span>
-                </label>
-                <label class="chip">
-                  <input type="checkbox" name="centres_interet" value="management">
-                  <span class="chip-content"><span class="chip-icon">💼</span> Management & Gestion</span>
-                </label>
-                <label class="chip">
-                  <input type="checkbox" name="centres_interet" value="écologie">
-                  <span class="chip-content"><span class="chip-icon">🌿</span> Écologie & Environnement</span>
-                </label>
-                <label class="chip">
-                  <input type="checkbox" name="centres_interet" value="santé">
-                  <span class="chip-content"><span class="chip-icon">🩺</span> Santé & Pharmacie</span>
-                </label>
-                <label class="chip">
-                  <input type="checkbox" name="centres_interet" value="agriculture">
-                  <span class="chip-content"><span class="chip-icon">🌾</span> Agriculture & Élevage</span>
-                </label>
-                <label class="chip">
-                  <input type="checkbox" name="centres_interet" value="design">
-                  <span class="chip-content"><span class="chip-icon">🏛️</span> BTP & Architecture</span>
-                </label>
-                <label class="chip">
-                  <input type="checkbox" name="centres_interet" value="robotique">
-                  <span class="chip-content"><span class="chip-icon">⚙️</span> Électronique & Robotique</span>
-                </label>
-                <label class="chip">
-                  <input type="checkbox" name="centres_interet" value="finance">
-                  <span class="chip-content"><span class="chip-icon">📊</span> Finance & Statistiques</span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Matières -->
-            <div class="form-group">
-              <label class="form-label" for="matieres">Matières préférées / Points forts</label>
-              <input id="matieres" name="matieres_preferees" type="text" placeholder="Ex. mathématiques, SVT, anglais, physique...">
-            </div>
-
-            <!-- Compétences / Expériences optionnelles -->
-            <div class="form-group">
-              <label class="form-label" for="competences">Ce que vous aimez faire ou projets réalisés</label>
-              <textarea id="competences" name="competences" rows="2" placeholder="Ex. codage, dessin, travaux pratiques, associatif..."></textarea>
-            </div>
-
-            <!-- Préférences -->
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label" for="preference">Aspiration pro</label>
-                <select id="preference" name="preferences_professionnelles">
-                  <option value="">Indifférent</option>
-                  <option value="Salariat">Salariat / Ingénieur</option>
-                  <option value="Entrepreneuriat">Entrepreneuriat</option>
-                  <option value="Recherche">Recherche & R&D</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="environnement">Cadre de travail</label>
-                <select id="environnement" name="environnement_travail">
-                  <option value="">Indifférent</option>
-                  <option value="Bureau">Bureau / Tech</option>
-                  <option value="Terrain">Terrain / Chantiers</option>
-                  <option value="Hybride">Hybride</option>
-                </select>
-              </div>
-            </div>
-
-            <button class="btn-primary" type="submit" id="btn-analyser">
-              <span>Analyser et trouver mes filières</span>
-              <span class="btn-icon" aria-hidden="true">→</span>
-            </button>
-          </form>
         </aside>
 
-        <!-- Colonne 2 : Recommandations & Assistant Chat -->
-        <section class="results-column">
-          <!-- Carte Recommandations (Le cœur du résultat) -->
+        <!-- Colonne 2 : Filières Recommandées (Centre) -->
+        <section class="col-recommendations">
           <div class="card recommendations-box">
             <div class="card-header">
               <div class="step-badge">2</div>
               <div>
-                <h2>Filières Recommandées</h2>
-                <p class="card-subtitle">Classées par adéquation avec votre profil</p>
+                <h2>Filières Suggérées</h2>
+                <p class="card-subtitle">Analyse d'adéquation en temps réel</p>
               </div>
               <span class="counter-badge" id="result-count">En attente</span>
             </div>
@@ -175,99 +177,76 @@
             <div id="recommendations" class="recommendations-container">
               <div class="empty-state">
                 <div class="empty-icon">✨</div>
-                <h3>Prêt à explorer les opportunités ?</h3>
-                <p>Renseignez votre profil à gauche et cliquez sur <strong>Analyser</strong> pour voir les parcours ISPM les plus adaptés.</p>
+                <h3>Découvrez vos filières idéales</h3>
+                <p>Cochez vos centres d'intérêt à gauche et cliquez sur <strong>Analyser</strong>.</p>
               </div>
             </div>
           </div>
+        </section>
 
-          <!-- Carte Assistant IA (Dialogue interactif) -->
+        <!-- Colonne 3 : Assistant Conversationnel Orient'IA & Sources (Droite, toujours accessible !) -->
+        <aside class="col-assistant">
+          <!-- Carte Chat Assistant toujours visible -->
           <div class="card chat-box">
             <div class="card-header">
               <div class="step-badge">3</div>
               <div>
                 <h2>Assistant Orient'IA</h2>
-                <p class="card-subtitle">Posez toutes vos questions sur les formations, métiers et conditions</p>
+                <p class="card-subtitle">Posez toutes vos questions en direct</p>
               </div>
             </div>
 
             <!-- Suggestions rapides de questions -->
             <div class="quick-prompts">
-              <span class="quick-title">Questions fréquentes :</span>
+              <span class="quick-title">Idées :</span>
               <button type="button" class="prompt-chip" data-msg="Quels sont les débouchés après IGGLIA ?">Débouchés IGGLIA</button>
               <button type="button" class="prompt-chip" data-msg="Quelles sont les conditions avec un Bacc D ?">Admission Bacc D</button>
-              <button type="button" class="prompt-chip" data-msg="Quelle est la différence entre TEE et TEH ?">Différence TEE / TEH</button>
-              <button type="button" class="prompt-chip" data-msg="Quels métiers après Génie Civil et Architecture (GCA) ?">Métiers en GCA</button>
+              <button type="button" class="prompt-chip" data-msg="Quelle est la différence entre TEE et TEH ?">Différence TEE/TEH</button>
+              <button type="button" class="prompt-chip" data-msg="Quels métiers après GCA ?">Métiers GCA</button>
             </div>
 
             <div class="chat-log" id="chat-log" aria-live="polite">
               <div class="chat-msg assistant">
                 <div class="msg-avatar">O</div>
                 <div class="msg-bubble">
-                  <div class="msg-meta">ORIENT’IA <span>Assistant officiel</span></div>
-                  <p>Bonjour ! Je suis l'assistant d'orientation ISPM. Renseignez votre profil pour obtenir des recommandations ou posez-moi directement vos questions ci-dessous.</p>
+                  <div class="msg-meta">ORIENT’IA <span>Assistant</span></div>
+                  <p>Bonjour ! Posez-moi vos questions sur les débouchés, matières ou prérequis de l'ISPM.</p>
                 </div>
               </div>
             </div>
 
             <form class="chat-input-bar" id="chat-form">
-              <input id="chat-input" type="text" placeholder="Ex. Quelle est la différence entre IGGLIA et ISAIA ?" autocomplete="off">
+              <input id="chat-input" type="text" placeholder="Posez une question..." autocomplete="off">
               <button type="submit" class="btn-send" aria-label="Envoyer">
                 <span>Envoyer</span>
                 <span aria-hidden="true">↗</span>
               </button>
             </form>
           </div>
-        </section>
 
-        <!-- Colonne 3 : Transparence, Sources et Traçabilité -->
-        <aside class="sidebar-column">
-          <!-- Sources officielles -->
-          <div class="card sources-card">
-            <div class="card-header">
-              <div class="step-badge">4</div>
-              <div>
-                <h2>Sources Officielles</h2>
-                <p class="card-subtitle">Données vérifiées de l'ISPM</p>
+          <!-- Sources & Traçabilité compactes en dessous du chat -->
+          <div class="meta-section">
+            <details class="card trace-card" id="trace-panel">
+              <summary class="trace-summary">
+                <span>📚 Sources & Traçabilité IA</span>
+                <span class="trace-arrow">⌄</span>
+              </summary>
+              <div class="trace-content" id="trace-content">
+                <div id="sources-list" class="sources-list" style="margin-bottom: 10px;">
+                  <div class="source-item">
+                    <div class="source-title">Institut Supérieur Polytechnique de Madagascar</div>
+                    <div class="source-tag">Corpus officiel · ispm-edu.com</div>
+                  </div>
+                </div>
+                <div class="trace-item">
+                  <div class="trace-key">Moteur</div>
+                  <div class="trace-val">ExtraTrees Classifier + RAG Hybride ISPM</div>
+                </div>
               </div>
-            </div>
-
-            <div id="sources-list" class="sources-list">
-              <div class="source-item">
-                <div class="source-title">Institut Supérieur Polytechnique de Madagascar</div>
-                <div class="source-tag">Corpus officiel · Fiches de mentions</div>
-                <a href="http://www.ispm-edu.com/presentation.php" target="_blank" rel="noreferrer" class="source-link">ispm-edu.com/presentation.php</a>
-              </div>
-              <div class="source-item">
-                <div class="source-title">Conditions d'admission & Inscription</div>
-                <div class="source-tag">Séries de Baccalauréat admises</div>
-                <a href="http://www.ispm-edu.com/inscription.php" target="_blank" rel="noreferrer" class="source-link">ispm-edu.com/inscription.php</a>
-              </div>
-            </div>
+            </details>
           </div>
-
-          <!-- Traçabilité & Garde-fous -->
-          <details class="card trace-card" id="trace-panel">
-            <summary class="trace-summary">
-              <span>🔍 Traçabilité & Justification IA</span>
-              <span class="trace-arrow">⌄</span>
-            </summary>
-            <div class="trace-content" id="trace-content">
-              <div class="trace-item">
-                <div class="trace-key">Requête</div>
-                <div class="trace-val">En attente d'une action</div>
-              </div>
-              <div class="trace-item">
-                <div class="trace-key">Modèle</div>
-                <div class="trace-val">ExtraTrees Classifier + RAG Hybride TF-IDF</div>
-              </div>
-              <div class="trace-item">
-                <div class="trace-key">Éthique</div>
-                <div class="trace-val">Refus de profilage psychologique & biais de genre</div>
-              </div>
-            </div>
-          </details>
         </aside>
+
       </div>
     </main>
 
@@ -277,11 +256,11 @@
         <div class="footer-alert">
           <span class="footer-alert-icon">💡</span>
           <div>
-            <strong>Conseil Pédagogique :</strong> ORIENT’IA est un outil d’aide à la décision. Les résultats sont des repères indicatifs basés sur les programmes officiels de l'ISPM.
+            <strong>Conseil Pédagogique :</strong> ORIENT’IA fournit des repères indicatifs basés sur les programmes officiels de l'ISPM.
           </div>
         </div>
         <div class="footer-copy">
-          © 2026 ORIENT’IA · Institut Supérieur Polytechnique de Madagascar
+          © 2026 ORIENT’IA · ISPM Madagascar
         </div>
       </div>
     </footer>
