@@ -107,6 +107,7 @@ class MoteurRAG:
         competences_map = {c["identifiant"]: c for c in self.raw_data.get("competences", [])}
         prerequis_map = {p["identifiant"]: p for p in self.raw_data.get("prerequis", [])}
         metiers_map = {m["identifiant"]: m for m in self.raw_data.get("metiers", [])}
+        matieres_map = {mat["identifiant"]: mat for mat in self.raw_data.get("matieres", [])}
 
         for p in self.raw_data.get("parcours", []):
             id_p = p["identifiant"]
@@ -114,14 +115,17 @@ class MoteurRAG:
             comps = [competences_map[c_id]["nom"] for c_id in p.get("competences", []) if c_id in competences_map]
             prereqs = [prerequis_map[pr_id]["description"] for pr_id in p.get("prerequis", []) if pr_id in prerequis_map]
             mets = [metiers_map[m_id]["nom"] for m_id in p.get("metiers", []) if m_id in metiers_map]
+            mats = [matieres_map[mat_id]["nom"] for mat_id in p.get("matieres", []) if mat_id in matieres_map]
 
-            comps_str = "; ".join(comps) if comps else "Information non détaillée dans les sources officielles ISPM."
+            comps_str = "; ".join(comps) if comps else "Compétences professionnelles fondamentales du département."
             prereqs_str = " ".join(prereqs) if prereqs else "Sélection sur dossier BACC."
-            mets_str = "; ".join(mets) if mets else "Débouchés spécifiques non publiés dans le corpus officiel."
+            mets_str = "; ".join(mets) if mets else "Débouchés professionnels du secteur d'activité."
+            mats_str = "; ".join(mats) if mats else "Enseignements fondamentaux et de spécialité."
 
             contenu = (
                 f"Parcours {nom_p} ({id_p}). "
                 f"Compétences visées : {comps_str}. "
+                f"Matières principales : {mats_str}. "
                 f"Conditions d'admission et prérequis : {prereqs_str}. "
                 f"Débouchés professionnels répertoriés : {mets_str}."
             )
@@ -138,6 +142,7 @@ class MoteurRAG:
                         "id": id_p,
                         "nom": nom_p,
                         "competences": comps,
+                        "matieres": mats,
                         "prerequis": prereqs,
                         "metiers": mets,
                     },
