@@ -8,10 +8,14 @@ version = "0.1.0"
 description = "Prototype explicable d'aide a l'orientation pedagogique"
 requires-python = ">=3.11"
 dependencies = [
+    "fastapi>=0.111,<1",
+    "uvicorn>=0.30,<1",
+    "httpx>=0.28,<1",
     "pydantic>=2.7,<3",
     "pandas>=2.0,<3",
     "matplotlib>=3.7,<4",
-    "scikit-learn>=1.4,<2",
+    "numpy>=1.26,<2",
+    "scikit-learn>=1.4,<1.5",
     "joblib>=1.3,<2",
 ]
 
