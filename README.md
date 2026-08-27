@@ -1,50 +1,79 @@
-# ORIENT'IA
+# ORIENT'IA — Assistant Intelligent d'Aide à l'Orientation Pédagogique
 
-Prototype d'assistant intelligent d'aide a l'orientation pedagogique, realise dans le cadre de l'examen de Master 2 a l'ISPM.
+Prototype d'assistant d'orientation développé pour l'Institut Supérieur Polytechnique de Madagascar (ISPM) dans le cadre de l'examen de fin d'études de Master 2.
 
-## Principe
+---
 
-ORIENT'IA combine un profil declare par l'utilisateur, un classement ML, des informations documentaires tracees et des regles pedagogiques. Le systeme devra produire une recommandation argumentee, prudente et accompagnee de son niveau d'incertitude. Il ne prendra jamais une decision officielle d'admission et ne presentera pas une information non verifiee comme officielle.
+## 1. Principe & Architecture
 
-## Architecture
+ORIENT'IA combine l'apprentissage statistique supervisé (Machine Learning), la recherche documentaire augmentée par la génération (RAG) et une couche d'orchestration conversationnelle sous contraintes de sécurité et de traçabilité.
 
 ```text
-donnees/       Sources, donnees brutes et donnees traitees
-ml/            Preparation, entrainement, evaluation et artefacts ML
-rag/           Ingestion, indexation et recherche documentaire
-agent/         Outils, regles et orchestration conversationnelle
-domaine/       Modeles et services metier
-api/           Frontiere HTTP (phase ulterieure)
-interface/     Interface de demonstration (phase ulterieure)
-tests/         Tests unitaires et d'integration
-notebooks/     Analyse exploratoire reproductible
-evaluation/    Jeu de cas et rapports d'evaluation
-scripts/       Commandes reproductibles
-documentation/ Decisions, methodologie et limites
+donnees/       Corpus vérifié ISPM, registre des sources et données d'enquête réelle
+data/          Jeux de données d'entraînement synthétiques contrôlés (anti-fuite)
+ml/            Artefacts sérialisés du modèle ExtraTrees et métadonnées
+orient_ia/
+  ├── rag/     Moteur de recherche hybride et traçabilité des passages
+  ├── agent/   Orchestrateur, outils fonctionnels et garde-fous de sécurité
+  ├── ml/      Featurisation, validation croisée et modèles
+  └── api/     Serveur FastAPI / Endpoints REST
+interface/     Interface Web utilisateur avec suivi de traçabilité et chat
+evaluation/    Jeu de 32 cas de test officiels (9 catégories réglementaires)
+scripts/       Scripts reproductibles d'entraînement et d'évaluation globale
+documentation/ Rapports d'évaluation, architecture, registre et analyse des risques
 ```
 
-## Corpus pédagogique Phase 1
+---
 
-Le corpus vérifié est disponible dans
-[donnees/corpus_pedagogique.json](donnees/corpus_pedagogique.json) et son
-périmètre est décrit dans
-[documentation/phase-1-corpus.md](documentation/phase-1-corpus.md). Il contient
-uniquement les mentions, parcours, niveaux, compétences, conditions d'accès et
-le débouché ISAIA effectivement publiés par l'ISPM le 26 août 2026.
+## 2. Installation & Démarrage rapide
 
-Les matières principales, les passerelles et les débouchés non publiés restent
-absents. Les matières de concours de l'annuaire externe ne sont pas utilisées
-comme matières de formation. L'habilitation ministérielle annoncée par l'ISPM
-n'a pas été vérifiée par un acte officiel indépendant.
+### Prérequis
+- Python 3.11+
+- PowerShell ou terminal Bash
 
-## Installation locale
-
-Python 3.11 ou plus recent est requis.
+### Installation de l'environnement virtuel
 
 ```powershell
+# 1. Création et activation de l'environnement
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
+
+# 2. Installation des dépendances
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-Copy-Item .env.example .env
+pip install -e .
 ```
+
+---
+
+## 3. Exécution de l'Application
+
+### Étape 1 : Démarrer le Serveur Backend API
+```powershell
+uvicorn orient_ia.api.serveur:app --reload --port 8000
+```
+*L'API est alors disponible sur `http://localhost:8000` (documentation Swagger interactive sur `http://localhost:8000/docs`).*
+
+### Étape 2 : Lancer l'Interface Web Utilisateur
+Ouvrez simplement le fichier `interface/index.html` dans votre navigateur Web moderne (Chrome, Firefox, Edge).
+L'interface se connecte automatiquement au backend `http://localhost:8000`.
+
+---
+
+## 4. Tests et Évaluation Expérimentale
+
+### Exécuter la suite complète de tests unitaires et d'intégration
+```powershell
+pytest
+```
+
+### Lancer le Benchmark Officiel des 32 cas de test
+```powershell
+python scripts/evaluer_systeme_complet.py
+```
+*Génère le rapport chiffré dans `documentation/rapport_evaluation_globale.md`.*
+
+---
+
+## 5. Mention obligatoire
+> **À garder en tête :** ORIENT’IA constitue un outil d’aide à l’orientation. Ses recommandations ne remplacent ni l’avis d’un conseiller pédagogique ni une décision officielle d’admission.

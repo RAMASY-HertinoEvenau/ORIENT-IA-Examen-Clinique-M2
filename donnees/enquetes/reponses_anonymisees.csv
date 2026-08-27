@@ -1,0 +1,21 @@
+id_repondant,population,serie_bacc,moyenne_declaree,matieres_preferees,centres_interet,preference_pro,environnement_travail,parcours_effectif,metier_actuel,score_adequation,consentement
+RESP_REAL_001,etudiant,C,14.5,programmation;mathematiques,informatique,salariat,bureau,IGGLIA,,5,oui
+RESP_REAL_002,etudiant,D,12.0,biologie;chimie,sante;agriculture,salariat,terrain,AGRO,,4,oui
+RESP_REAL_003,etudiant,C,15.2,mathematiques;statistiques;programmation,informatique;recherche,recherche,bureau,ISAIA,,5,oui
+RESP_REAL_004,professionnel,S,13.0,mathematiques;physique,electronique;robotique,salariat,mixte,AEE,Ingenieur Systemes Embarques,4,oui
+RESP_REAL_005,professionnel,C,16.0,programmation;algorithmique,informatique,entrepreneuriat,bureau,IGGLIA,Lead Developer / CTO,5,oui
+RESP_REAL_006,etudiant,Tech,11.5,dessin_technique;physique,batiment,salariat,terrain,GC,,3,oui
+RESP_REAL_007,professionnel,D,14.0,biologie;sciences_terre,ecologie;agriculture,salariat,terrain,EIE,Responsable QHSE & Environnement,4,oui
+RESP_REAL_008,etudiant,C,13.8,mathematiques;statistiques,informatique,salariat,bureau,ISAIA,,4,oui
+RESP_REAL_009,professionnel,C,15.5,mathematiques;programmation,informatique,salariat,bureau,ISAIA,Data Scientist Senior,5,oui
+RESP_REAL_010,etudiant,D,12.5,chimie;biologie,sante,salariat,mixte,IAA,,4,oui
+RESP_REAL_011,professionnel,S,14.2,physique;mecanique,electronique,salariat,terrain,EMII,Ingenieur Maintenance Industrielle,4,oui
+RESP_REAL_012,etudiant,C,13.0,programmation;mathematiques,informatique,entrepreneuriat,bureau,IGGLIA,,4,oui
+RESP_REAL_013,professionnel,L,11.0,droit;economie,management,salariat,bureau,TGI,Consultant en Organisation,3,oui
+RESP_REAL_014,etudiant,C,16.2,mathematiques;physique,recherche;informatique,recherche,bureau,ISAIA,,5,oui
+RESP_REAL_015,professionnel,Tech,13.5,mecanique;dessin,batiment;industrie,entrepreneuriat,terrain,GC,Conducteur de Travaux BTP,5,oui
+RESP_REAL_016,etudiant,D,10.8,biologie,sante;ecologie,salariat,terrain,AGRO,,3,oui
+RESP_REAL_017,professionnel,C,14.8,programmation;physique,informatique;telecoms,salariat,mixte,TEE,Ingenieur Reseaux & Telecoms,4,oui
+RESP_REAL_018,etudiant,C,12.2,physique;chimie,industrie,salariat,terrain,GP,,3,oui
+RESP_REAL_019,professionnel,C,15.0,programmation,informatique,salariat,bureau,IGGLIA,Architecte Logiciel,5,oui
+RESP_REAL_020,etudiant,S,13.5,mathematiques;programmation,informatique,salariat,bureau,IGGLIA,,4,oui

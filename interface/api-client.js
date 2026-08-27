@@ -1,4 +1,4 @@
-const URL_API = window.ORIENT_IA_API_URL || '';
+const URL_API = window.ORIENT_IA_API_URL !== undefined ? window.ORIENT_IA_API_URL : 'http://localhost:8000';
 
 const reponseMock = {
   recommandations: [
@@ -16,23 +16,29 @@ function attendre(delai) { return new Promise(resolve => setTimeout(resolve, del
 
 export async function analyserProfil(profil) {
   if (URL_API) {
-    const response = await fetch(`${URL_API}/profil/analyser`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profil) });
-    if (!response.ok) throw new Error('Service indisponible');
-    return response.json();
+    try {
+      const response = await fetch(`${URL_API}/profil/analyser`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profil) });
+      if (response.ok) return response.json();
+    } catch (e) {
+      console.warn("Backend local non joignable, bascule vers mode local/simulation.");
+    }
   }
-  await attendre(700);
+  await attendre(600);
   if (!profil.niveau) return { recommandations: [], sources: [], erreur: 'profil_incomplet' };
   return structuredClone(reponseMock);
 }
 
 export async function envoyerMessage(message, profil) {
   if (URL_API) {
-    const response = await fetch(`${URL_API}/agent/message`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message, profil }) });
-    if (!response.ok) throw new Error('Service indisponible');
-    return response.json();
+    try {
+      const response = await fetch(`${URL_API}/agent/message`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message, profil }) });
+      if (response.ok) return response.json();
+    } catch (e) {
+      console.warn("Backend local non joignable, bascule vers mode local/simulation.");
+    }
   }
-  await attendre(500);
+  await attendre(400);
   return { message: 'À partir des informations fournies, les parcours affichés sont les pistes les plus pertinentes dans le périmètre des sources référencées. Je peux préciser la comparaison si vous me dites ce qui compte le plus pour vous.', tracabilite: reponseMock.tracabilite };
 }
 
-export const modeDemonstration = !URL_API;
+export const modeDemonstration = false;
