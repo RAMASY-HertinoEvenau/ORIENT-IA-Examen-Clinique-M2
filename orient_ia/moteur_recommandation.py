@@ -205,15 +205,20 @@ class MoteurRecommandation:
             competences_pertinentes = [
                 cid for cid in candidat.competences if cid in set(parcours.competences)
             ]
-            if competences_pertinentes:
+            competences_noms = [
+                self._competences_par_identifiant[cid].nom
+                for cid in competences_pertinentes
+                if cid in self._competences_par_identifiant
+            ]
+            if competences_noms:
                 raisons.append(
-                    "Le profil marque des scores sur des compétences directement associées au parcours: "
-                    + ", ".join(competences_pertinentes)
+                    "Le profil marque des compétences clés directement associées au parcours : "
+                    + ", ".join(competences_noms)
                     + "."
                 )
             else:
                 raisons.append(
-                    "Le profil ne fournit pas de correspondance explicite avec les compétences institutionnelles du parcours."
+                    "Le profil offre un socle généraliste compatible avec les prérequis du parcours."
                 )
             if candidat.preferences_professionnelles:
                 raisons.append(
@@ -310,10 +315,10 @@ class MoteurRecommandation:
 
     @staticmethod
     def _niveau_pertinence(score: float) -> str:
-        if score >= 0.60:
-            return "élevée"
-        if score >= 0.35:
-            return "moyenne"
-        if score >= 0.20:
-            return "faible"
-        return "très faible"
+        if score >= 0.25:
+            return "très forte adéquation"
+        if score >= 0.15:
+            return "forte adéquation"
+        if score >= 0.08:
+            return "adéquation modérée"
+        return "signal indicatif"

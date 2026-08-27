@@ -28,18 +28,37 @@ def _champs_manquants(profil: Mapping[str, Any]) -> list[str]:
 def _message_autour_recommandation(profil: Mapping[str, Any], conseil: dict[str, Any]) -> str:
     recommandations = conseil.get("recommandations", [])
     if not recommandations:
-        return "Je n’ai pas assez de signal pour proposer une recommandation fiable. Merci de compléter le profil."
+        return "Je n’ai pas assez de signal pour proposer une recommandation fiable. Merci de compléter le profil avec vos matières préférées, votre moyenne et vos compétences."
 
-    items = []
-    for parcours in recommandations[:3]:
-        nom = parcours.get("nom") or parcours.get("formation") or "Parcours"
-        score = parcours.get("score")
-        items.append(f"- {nom}{f' ({score})' if score is not None else ''}")
+    sections = []
+    for idx, item in enumerate(recommandations[:3], 1):
+        fmt = item.get("formation", {})
+        nom = fmt.get("nom") or item.get("nom") or item.get("parcours") or "Parcours ISPM"
+        score = item.get("score")
+        score_pct = f"{int(score * 100)}%" if score is not None else "N/A"
+        niveau = item.get("niveau_pertinence", "indicatif")
+
+        raisons = item.get("raisons_liees_au_profil", [])
+        corpus_elts = item.get("elements_du_corpus", [])
+
+        explications = [r for r in raisons if "moyenne" not in r.lower()]
+        corpus_info = [c for c in corpus_elts if "référencé" not in c.lower()]
+
+        detail_text = ""
+        if explications:
+            detail_text += f"   • Adéquation profil : {explications[0]}\n"
+        if corpus_info:
+            detail_text += f"   • Repère corpus : {corpus_info[0]}\n"
+
+        sections.append(
+            f"**{idx}. {nom}** (Pertinence : {score_pct} — {niveau})\n{detail_text}"
+        )
 
     return (
-        "Voici les pistes les plus cohérentes avec le profil fourni :\n"
-        + "\n".join(items)
-        + "\n\nJe reste prudent : la recommandation aide l’orientation, elle ne remplace pas une décision humaine."
+        "### 🎯 Orientation & Parcours Recommandés (ISPM)\n\n"
+        "Sur la base de votre profil académique, de vos centres d'intérêt et des données du corpus institutionnel de l'ISPM, voici les pistes les plus cohérentes :\n\n"
+        + "\n".join(sections)
+        + "\n💡 **Note d'orientation prudentielle** : Ces résultats constituent une aide à la décision fondée sur le modèle statistique et le corpus vérifié. Ils sont indicatifs et ne remplacent pas un entretien pédagogique ou une décision officielle d'admission."
     )
 
 
