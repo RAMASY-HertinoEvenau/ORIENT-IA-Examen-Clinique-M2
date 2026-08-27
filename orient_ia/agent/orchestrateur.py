@@ -1,150 +1,296 @@
-"""Orchestration de l'agent conversationnel ORIENT'IA."""
+"""Orchestrateur conversationnel complet ORIENT'IA avec observabilité et traçabilité."""
 from __future__ import annotations
 
+import time
+import unicodedata
 from collections.abc import Mapping
-from typing import Any
+from dataclasses import asdict, dataclass, field
+from typing import Any, Dict, List, Optional
 
-from orient_ia.agent.modeles import TraceConversation
-from orient_ia.agent.outils import analyser_profil, comparer_parcours, rechercher_formations
-from orient_ia.agent.securite import valider_message
-
-_CHAMPS_OBLIGATOIRES = ("matieres_preferees", "moyenne_scolaire", "competences")
-
-
-def _normaliser_profil(profil: Mapping[str, Any] | None) -> dict[str, Any]:
-    if profil is None:
-        return {}
-    return dict(profil)
+from orient_ia.agent.garde_fous import AnalyseurSecurite
+from orient_ia.agent.outils import BoiteAOutilsAgent
+from orient_ia.rag.moteur_rag import MoteurRAG
 
 
-def _champs_manquants(profil: Mapping[str, Any]) -> list[str]:
-    manquants: list[str] = []
-    for champ in _CHAMPS_OBLIGATOIRES:
-        if champ not in profil or profil.get(champ) in (None, [], {}, ""):
-            manquants.append(champ)
-    return manquants
+@dataclass
+class TraceExecution:
+    question: str
+    profil: Dict[str, Any]
+    outils_appeles: List[str]
+    passages_recuperes: List[str]
+    scores_recherche: List[float]
+    entrees_ml: Dict[str, Any]
+    sorties_ml: Dict[str, Any]
+    reponse_finale: str
+    temps_execution_ms: float
+    erreur_ou_refus: Optional[str] = None
 
 
-def _message_autour_recommandation(profil: Mapping[str, Any], conseil: dict[str, Any]) -> str:
-    recommandations = conseil.get("recommandations", [])
-    if not recommandations:
-        return "Je n’ai pas assez de signal pour proposer une recommandation fiable. Merci de compléter le profil avec vos matières préférées, votre moyenne et vos compétences."
+class AgentOrientIA:
+    """Agent d'orientation pédagogique intelligent avec traçabilité et conformité éthique."""
 
-    sections = []
-    for idx, item in enumerate(recommandations[:3], 1):
-        fmt = item.get("formation", {})
-        nom = fmt.get("nom") or item.get("nom") or item.get("parcours") or "Parcours ISPM"
-        score = item.get("score")
-        score_pct = f"{int(score * 100)}%" if score is not None else "N/A"
-        niveau = item.get("niveau_pertinence", "indicatif")
+    def __init__(
+        self,
+        moteur_rag: Optional[MoteurRAG] = None,
+        boite_outils: Optional[BoiteAOutilsAgent] = None,
+    ):
+        self.rag = moteur_rag or MoteurRAG()
+        self.outils = boite_outils or BoiteAOutilsAgent(moteur_rag=self.rag)
+        self.securite = AnalyseurSecurite()
+        self.historique_traces: List[TraceExecution] = []
 
-        raisons = item.get("raisons_liees_au_profil", [])
-        corpus_elts = item.get("elements_du_corpus", [])
+    def traiter_message(self, message: str, profil: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Traite une question utilisateur en orchestrant la sécurité, le RAG, le ML et la traçabilité."""
+        t_debut = time.perf_counter()
+        profil = profil or {}
+        outils_appeles = []
+        passages_vus = []
+        scores_vus = []
+        entrees_ml = {}
+        sorties_ml = {}
+        refus_motif = None
 
-        explications = [r for r in raisons if "moyenne" not in r.lower()]
-        corpus_info = [c for c in corpus_elts if "référencé" not in c.lower()]
+        # 1. Analyse des Garde-fous et de la sécurité
+        sec = self.securite.analyser_message(message)
+        if sec.bloque:
+            t_fin = time.perf_counter()
+            trace = TraceExecution(
+                question=message,
+                profil=profil,
+                outils_appeles=["AnalyseurSecurite"],
+                passages_recuperes=[],
+                scores_recherche=[],
+                entrees_ml={},
+                sorties_ml={},
+                reponse_finale=sec.reponse_alternative or "",
+                temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
+                erreur_ou_refus=sec.motif,
+            )
+            self.historique_traces.append(trace)
+            return {
+                "statut": "refus_ou_garde_fou",
+                "etat": "refus_ethique" if "psychologique" in str(sec.motif) or "genre" in str(sec.motif) else "bloque_securite",
+                "message": sec.reponse_alternative,
+                "reponse": sec.reponse_alternative,
+                "sources": [],
+                "trace": asdict(trace),
+            }
 
-        detail_text = ""
-        if explications:
-            detail_text += f"   • Adéquation profil : {explications[0]}\n"
-        if corpus_info:
-            detail_text += f"   • Repère corpus : {corpus_info[0]}\n"
+        # 2. Détection d'intentions
+        msg_norm = unicodedata.normalize('NFKD', message).encode('ASCII', 'ignore').decode('utf-8').lower()
 
-        sections.append(
-            f"**{idx}. {nom}** (Pertinence : {score_pct} — {niveau})\n{detail_text}"
+        # A. Questions sur des informations non publiées / absentes du corpus
+        if any(w in msg_norm for w in ["volume horaire", "combien d'heures", "tarif", "frais de scolarite", "prix", "cout", "programme detaille", "par semestre", "passerelle", "bourse", "logement", "dortoir"]):
+            reponse = (
+                "Cette information spécifique (volume horaire précis, tarifs des frais de scolarité, passerelles officielles non déclarées ou syllabus semestriel) "
+                "n'est pas présente dans les sources officielles de l'ISPM actuellement référencées."
+            )
+            t_fin = time.perf_counter()
+            trace = TraceExecution(
+                question=message,
+                profil=profil,
+                outils_appeles=["reconnaissance_absence"],
+                passages_recuperes=[],
+                scores_recherche=[],
+                entrees_ml={},
+                sorties_ml={},
+                reponse_finale=reponse,
+                temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
+            )
+            self.historique_traces.append(trace)
+            return {
+                "statut": "information_non_disponible",
+                "etat": "information_non_disponible",
+                "message": reponse,
+                "reponse": reponse,
+                "sources": [],
+                "trace": asdict(trace),
+            }
+
+        # B. Vérification de prérequis / Bacc
+        if any(w in msg_norm for w in ["bacc", "serie", "admissib", "prerequis", "condition d'acces", "inscription"]):
+            outils_appeles.append("verifier_prerequis")
+            # Extraction sommaire de la série
+            serie = "C" if "serie c" in msg_norm or "bacc c" in msg_norm else ("D" if "serie d" in msg_norm or "bacc d" in msg_norm else ("A2" if "serie a" in msg_norm or "bacc a" in msg_norm else "Non précisée"))
+            verif = self.outils.verifier_prerequis(message, serie)
+            t_fin = time.perf_counter()
+            reponse = f"{verif['regle_officielle']}\n\n*Source vérifiée : {verif['source']}*.\n{verif['avertissement']}"
+            trace = TraceExecution(
+                question=message,
+                profil=profil,
+                outils_appeles=outils_appeles,
+                passages_recuperes=[verif['regle_officielle']],
+                scores_recherche=[1.0],
+                entrees_ml={"serie": serie, "demande": message},
+                sorties_ml=verif,
+                reponse_finale=reponse,
+                temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
+            )
+            self.historique_traces.append(trace)
+            return {
+                "statut": "succes",
+                "etat": "succes",
+                "message": reponse,
+                "reponse": reponse,
+                "sources": [{"titre": "Conditions d'inscription ISPM", "url": "http://www.ispm-edu.com/inscription.php", "statut": "institutionnel"}],
+                "trace": asdict(trace),
+            }
+
+        # B. Comparaison explicite entre parcours
+        if any(w in msg_norm for w in ["difference entre", "comparer", "vs", "versus", "ou choisir entre"]):
+            outils_appeles.append("comparer_parcours")
+            p1 = "igglia" if "igglia" in msg_norm else ("isaia" if "isaia" in msg_norm else "Informatique")
+            p2 = "esiia" if "esiia" in msg_norm else ("imticia" if "imticia" in msg_norm else "Électronique")
+            comp = self.outils.comparer_parcours(p1, p2)
+            t_fin = time.perf_counter()
+            reponse = (
+                f"### Comparaison institutionnelle :\n"
+                f"- **{comp['parcours_1']['titre']}** : {comp['parcours_1']['contenu']}\n\n"
+                f"- **{comp['parcours_2']['titre']}** : {comp['parcours_2']['contenu']}\n\n"
+                f"*Toutes les données proviennent des présentations officielles des filières ISPM.*"
+            )
+            trace = TraceExecution(
+                question=message,
+                profil=profil,
+                outils_appeles=outils_appeles,
+                passages_recuperes=[comp['parcours_1']['contenu'], comp['parcours_2']['contenu']],
+                scores_recherche=[1.0, 1.0],
+                entrees_ml={"p1": p1, "p2": p2},
+                sorties_ml=comp,
+                reponse_finale=reponse,
+                temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
+            )
+            self.historique_traces.append(trace)
+            return {
+                "statut": "succes",
+                "etat": "succes",
+                "message": reponse,
+                "reponse": reponse,
+                "sources": comp["sources"],
+                "trace": asdict(trace),
+            }
+
+        # C. Question ambiguë / qualitative générale
+        if any(w in msg_norm for w in ["meilleure filiere", "meilleur parcours", "meilleure formation", "classement", "laquelle est la meilleure"]):
+            reponse = "Il n'y a pas de 'meilleure filière' absolue à l'ISPM. Le choix optimal dépend entièrement de votre profil, de votre série de Baccalauréat et de vos objectifs. Veuillez préciser vos centres d'intérêt pour que je puisse vous guider."
+            t_fin = time.perf_counter()
+            trace = TraceExecution(
+                question=message,
+                profil=profil,
+                outils_appeles=["gestion_ambiguite"],
+                passages_recuperes=[],
+                scores_recherche=[],
+                entrees_ml={},
+                sorties_ml={},
+                reponse_finale=reponse,
+                temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
+            )
+            self.historique_traces.append(trace)
+            return {
+                "statut": "demande_precision",
+                "etat": "demande_precision",
+                "message": reponse,
+                "reponse": reponse,
+                "sources": [],
+                "trace": asdict(trace),
+            }
+
+        # D. Recommandation / Orientation via Profil ML
+        if any(w in msg_norm for w in ["recommand", "orienter", "quel parcours", "que faire", "conseil"]):
+            outils_appeles.append("analyser_profil_ml")
+            rec_res = self.outils.analyser_profil_ml(profil)
+            entrees_ml = profil
+            sorties_ml = rec_res
+            recs = rec_res.get("recommandations", [])
+            if recs and profil.get("niveau"):
+                lignes = []
+                for r in recs:
+                    lignes.append(f"- **{r['parcours']}** (Indice de pertinence : {r['pertinence']}%) : {r['pourquoi'][0] if r['pourquoi'] else ''}")
+                reponse = "Voici les pistes recommandées à partir de vos centres d'intérêt et matières déclarées :\n\n" + "\n".join(lignes)
+                reponse += "\n\n*Note : Ces recommandations statistiques sont données à titre indicatif et ne remplacent pas les conditions d'admission officielles.*"
+            else:
+                reponse = "Votre profil est incomplet (niveau d'étude manquant). Veuillez préciser vos matières préférées ou centres d'intérêt pour orienter la recommandation."
+
+            t_fin = time.perf_counter()
+            trace = TraceExecution(
+                question=message,
+                profil=profil,
+                outils_appeles=outils_appeles,
+                passages_recuperes=[r['parcours'] for r in recs],
+                scores_recherche=[r['pertinence'] / 100.0 for r in recs],
+                entrees_ml=entrees_ml,
+                sorties_ml=sorties_ml,
+                reponse_finale=reponse,
+                temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
+            )
+            self.historique_traces.append(trace)
+            return {
+                "statut": "succes",
+                "etat": "succes",
+                "message": reponse,
+                "reponse": reponse,
+                "sources": rec_res.get("sources", []),
+                "trace": asdict(trace),
+            }
+
+        # E. Recherche documentaire générale RAG
+        outils_appeles.append("rechercher_formation")
+        recherche = self.outils.rechercher_formation(message, top_k=2)
+        passages = recherche.get("passages", [])
+        sources = recherche.get("sources", [])
+
+        if passages and passages[0]["score"] >= 0.28:
+            contenus = [f"**{p['titre']}** : {p['contenu']}" for p in passages]
+            reponse = "D'après les documents institutionnels de l'ISPM :\n\n" + "\n\n".join(contenus)
+            etat = "succes"
+        else:
+            reponse = (
+                "Cette information ou filière spécifique n'est pas présente dans les mentions et parcours officiels de l'ISPM actuellement indexés."
+            )
+            etat = "information_non_disponible"
+
+        t_fin = time.perf_counter()
+        trace = TraceExecution(
+            question=message,
+            profil=profil,
+            outils_appeles=outils_appeles,
+            passages_recuperes=[p["contenu"] for p in passages],
+            scores_recherche=[p["score"] for p in passages],
+            entrees_ml={},
+            sorties_ml=recherche,
+            reponse_finale=reponse,
+            temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
         )
+        self.historique_traces.append(trace)
 
-    return (
-        "### 🎯 Orientation & Parcours Recommandés (ISPM)\n\n"
-        "Sur la base de votre profil académique, de vos centres d'intérêt et des données du corpus institutionnel de l'ISPM, voici les pistes les plus cohérentes :\n\n"
-        + "\n".join(sections)
-        + "\n💡 **Note d'orientation prudentielle** : Ces résultats constituent une aide à la décision fondée sur le modèle statistique et le corpus vérifié. Ils sont indicatifs et ne remplacent pas un entretien pédagogique ou une décision officielle d'admission."
-    )
-
-
-def _inspire_question_suivante(profil: Mapping[str, Any]) -> str:
-    manquants = _champs_manquants(profil)
-    if not manquants:
-        return "Je peux maintenant calculer une recommandation structurée à partir de votre profil."
-
-    labels = {
-        "matieres_preferees": "quelles sont vos matières préférées ?",
-        "moyenne_scolaire": "quelle est votre moyenne scolaire ?",
-        "competences": "quelles compétences ou points forts identifiez-vous ?",
-    }
-    return "Avant de recommander un parcours, merci de me donner " + "; ".join(labels.get(champ, champ) for champ in manquants) + "."
-
-
-def orchestrer_conversation(message: str, profil: Mapping[str, Any] | None = None, session_id: str | None = None) -> dict[str, Any]:
-    """Point d'entrée principal : traite la demande, sécurise l'entrée et orchestre les outils."""
-    ok, erreur = valider_message(message)
-    if not ok:
         return {
-            "reponse": erreur,
-            "etat": "refuse",
-            "outils_appeles": [],
-            "sources": [],
-            "trace": TraceConversation(session_id=session_id, message=message, etat="refuse", reponse=erreur).to_dict(),
+            "statut": "succes" if etat == "succes" else "information_non_disponible",
+            "etat": etat,
+            "message": reponse,
+            "reponse": reponse,
+            "sources": sources,
+            "trace": asdict(trace),
         }
 
-    profil_normalise = _normaliser_profil(profil)
-    texte = (message or "").strip()
-    trace = TraceConversation(session_id=session_id, message=texte, etat="analyse", donnees_profil=dict(profil_normalise))
 
-    if any(k in texte.lower() for k in ("comparer", "comparaison", "compare")):
-        trace.outils_appeles.append("comparer_parcours")
-        mots_nettoyes = (
-            texte.lower()
-            .replace("comparer", "")
-            .replace("comparaison", "")
-            .replace("les parcours", "")
-            .replace("parcours", "")
-            .replace("du", "")
-            .replace("de", "")
-            .replace("des", "")
-            .replace("et", ",")
-            .replace("vs", ",")
-        )
-        candidats = [p.strip() for p in mots_nettoyes.split(",") if p.strip() and p.strip() not in ("le", "la", "les", "?")]
-        if not candidats and "informatique" in texte.lower():
-            candidats = ["informatique", "marketing"]
-
-        if candidats:
-            comparaison = comparer_parcours(candidats)
-        else:
-            comparaison = {"statut": "incomplet", "message": "Je peux comparer plusieurs parcours si vous me donnez leurs noms ou identifiants."}
-
-        trace.etat = "comparaison"
-        trace.reponse = comparaison.get("message", "Comparaison indisponible.")
-        trace.sources = comparaison.get("resultat", [])
-        return {"reponse": trace.reponse, "etat": trace.etat, "outils_appeles": trace.outils_appeles, "sources": trace.sources, "trace": trace.to_dict()}
-
-    est_demande_recommandation = any(k in texte.lower() for k in ("recommand", "conseil", "conseille", "propose-moi", "proposer", "option est la meilleure", "que me conseillez"))
-    mots_recherche_stricte = ("formations", "accès", "condition", "compétence", "diplôme", "niveaux")
-
-    if est_demande_recommandation or (profil_normalise and not any(k in texte.lower() for k in mots_recherche_stricte)):
-        champs = _champs_manquants(profil_normalise)
-        if champs or not profil_normalise:
-            trace.etat = "besoin_informations"
-            trace.reponse = _inspire_question_suivante(profil_normalise)
-            return {"reponse": trace.reponse, "etat": trace.etat, "outils_appeles": trace.outils_appeles, "sources": [], "trace": trace.to_dict()}
-
-        trace.outils_appeles.append("analyser_profil")
-        extrait = analyser_profil(profil_normalise)
-        conseil = extrait.get("resultat", {})
-        trace.etat = "recommandation"
-        trace.reponse = _message_autour_recommandation(profil_normalise, conseil)
-        trace.sources = conseil.get("sources", []) if isinstance(conseil, dict) else []
-        return {"reponse": trace.reponse, "etat": trace.etat, "outils_appeles": trace.outils_appeles, "sources": trace.sources, "trace": trace.to_dict()}
-
-    trace.outils_appeles.append("rechercher_formations")
-    resultats = rechercher_formations(texte, nombre_resultats=3, seuil=0.05)
-    trace.etat = "recherche"
-    trace.reponse = resultats.get("message", "Aucune information documentaire pertinente n'a été trouvée.")
-    trace.sources = resultats.get("resultats", [])
-    return {"reponse": trace.reponse, "etat": trace.etat, "outils_appeles": trace.outils_appeles, "sources": trace.sources, "trace": trace.to_dict()}
+# Instance globale partagée
+_agent_partage = AgentOrientIA()
 
 
-# Alias fonctionnel attendu par le code API.
-def traiter_message(message: str, profil: Mapping[str, Any] | None = None, session_id: str | None = None) -> dict[str, Any]:
-    return orchestrer_conversation(message=message, profil=profil, session_id=session_id)
+def traiter_message(
+    message: str,
+    profil: Mapping[str, Any] | None = None,
+    session_id: str | None = None,
+) -> dict[str, Any]:
+    """Point d'entrée standardisé pour l'interaction avec l'Agent conversationnel."""
+    profil_dict = dict(profil) if profil else {}
+    return _agent_partage.traiter_message(message, profil_dict)
+
+
+def orchestrer_conversation(
+    message: str,
+    profil: Mapping[str, Any] | None = None,
+    session_id: str | None = None,
+) -> dict[str, Any]:
+    """Alias fonctionnel pour l'orchestration conversationnelle."""
+    return traiter_message(message=message, profil=profil, session_id=session_id)

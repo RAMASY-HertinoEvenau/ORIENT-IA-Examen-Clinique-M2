@@ -57,63 +57,1038 @@
     }
   ],
   "mentions": [
-    {"identifiant": "mention-informatique-telecommunications", "nom": "Informatique et Telecommunications", "parcours": ["parcours-igglia", "parcours-esiia", "parcours-imticia", "parcours-isaia"], "sources": ["ispm-presentation"]},
-    {"identifiant": "mention-genie-industriel", "nom": "Genie Industriel", "parcours": ["parcours-emii", "parcours-icmp"], "sources": ["ispm-presentation"]},
-    {"identifiant": "mention-genie-civil-architecture", "nom": "Genie Civil et Architecture", "parcours": ["parcours-gca"], "sources": ["ispm-presentation"]},
-    {"identifiant": "mention-droit-techniques-affaires", "nom": "Droit et Techniques des Affaires", "parcours": ["parcours-caa", "parcours-emp", "parcours-fic", "parcours-dtja"], "sources": ["ispm-presentation"]},
-    {"identifiant": "mention-biotechnologie-agronomie", "nom": "Biotechnologie et Agronomie", "parcours": ["parcours-iaa", "parcours-aee", "parcours-pip"], "sources": ["ispm-presentation"]},
-    {"identifiant": "mention-tourisme", "nom": "Tourisme", "parcours": ["parcours-tee", "parcours-teh"], "sources": ["ispm-presentation"]}
+    {
+      "identifiant": "mention-informatique-telecommunications",
+      "nom": "Informatique et Telecommunications",
+      "parcours": [
+        "parcours-igglia",
+        "parcours-esiia",
+        "parcours-imticia",
+        "parcours-isaia"
+      ],
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "mention-genie-industriel",
+      "nom": "Genie Industriel",
+      "parcours": [
+        "parcours-emii",
+        "parcours-icmp"
+      ],
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "mention-genie-civil-architecture",
+      "nom": "Genie Civil et Architecture",
+      "parcours": [
+        "parcours-gca"
+      ],
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "mention-droit-techniques-affaires",
+      "nom": "Droit et Techniques des Affaires",
+      "parcours": [
+        "parcours-caa",
+        "parcours-emp",
+        "parcours-fic",
+        "parcours-dtja"
+      ],
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "mention-biotechnologie-agronomie",
+      "nom": "Biotechnologie et Agronomie",
+      "parcours": [
+        "parcours-iaa",
+        "parcours-aee",
+        "parcours-pip"
+      ],
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "mention-tourisme",
+      "nom": "Tourisme",
+      "parcours": [
+        "parcours-tee",
+        "parcours-teh"
+      ],
+      "sources": [
+        "ispm-presentation"
+      ]
+    }
   ],
   "formations": [
-    {"identifiant": "formation-licence", "nom": "Licence", "mentions": ["mention-informatique-telecommunications", "mention-genie-industriel", "mention-genie-civil-architecture", "mention-droit-techniques-affaires", "mention-biotechnologie-agronomie", "mention-tourisme"], "niveau": "BACC+3", "sources": ["ispm-presentation"]},
-    {"identifiant": "formation-master", "nom": "Master", "mentions": ["mention-informatique-telecommunications", "mention-genie-industriel", "mention-genie-civil-architecture", "mention-droit-techniques-affaires", "mention-biotechnologie-agronomie", "mention-tourisme"], "niveau": "BACC+5", "sources": ["ispm-presentation"]}
+    {
+      "identifiant": "formation-licence",
+      "nom": "Licence",
+      "mentions": [
+        "mention-informatique-telecommunications",
+        "mention-genie-industriel",
+        "mention-genie-civil-architecture",
+        "mention-droit-techniques-affaires",
+        "mention-biotechnologie-agronomie",
+        "mention-tourisme"
+      ],
+      "niveau": "BACC+3",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "formation-master",
+      "nom": "Master",
+      "mentions": [
+        "mention-informatique-telecommunications",
+        "mention-genie-industriel",
+        "mention-genie-civil-architecture",
+        "mention-droit-techniques-affaires",
+        "mention-biotechnologie-agronomie",
+        "mention-tourisme"
+      ],
+      "niveau": "BACC+5",
+      "sources": [
+        "ispm-presentation"
+      ]
+    }
   ],
   "parcours": [
-    {"identifiant": "parcours-igglia", "nom": "Informatique de Gestion Genie Logiciel et Intelligence Artificielle (IGGLIA)", "competences": ["competence-techniques-informatiques-gestion"], "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "sources": ["ispm-presentation", "ispm-filieres", "ispm-inscription"]},
-    {"identifiant": "parcours-esiia", "nom": "Electronique Systeme Informatique et Intelligence Artificielle (ESIIA)", "competences": ["competence-electronique-systemes"], "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "sources": ["ispm-presentation", "ispm-filieres", "ispm-inscription"]},
-    {"identifiant": "parcours-imticia", "nom": "Informatique Multimedia Technologie de l'Information et de la Communication et Intelligence Artificielle (IMTICIA)", "competences": ["competence-multimedia-telecommunications"], "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "sources": ["ispm-presentation", "ispm-filieres", "ispm-inscription"]},
-    {"identifiant": "parcours-isaia", "nom": "Informatique Statistique Appliquee et Intelligence Artificielle (ISAIA)", "competences": ["competence-statistiques-informatique"], "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "metiers": ["metier-isaia-economie"], "sources": ["ispm-presentation", "ispm-filieres", "ispm-inscription"]},
-    {"identifiant": "parcours-emii", "nom": "Electro-Mecanique et Informatique Industrielle (EMII)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "sources": ["ispm-presentation", "ispm-inscription"]},
-    {"identifiant": "parcours-icmp", "nom": "Industries Chimiques, Minieres et Petrolieres (ICMP)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-informatique"], "sources": ["ispm-presentation", "ispm-inscription"]},
-    {"identifiant": "parcours-gca", "nom": "Genie Civil et Architecture (GCA)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier"], "sources": ["ispm-presentation", "ispm-inscription"]},
-    {"identifiant": "parcours-caa", "nom": "Commerce et Administration des Affaires (CAA)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]},
-    {"identifiant": "parcours-emp", "nom": "Economie et Management de Projet (EMP)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]},
-    {"identifiant": "parcours-fic", "nom": "Finances et Comptabilites (FIC)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]},
-    {"identifiant": "parcours-dtja", "nom": "Droit et Techniques Juridiques des Affaires (DTJA)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]},
-    {"identifiant": "parcours-iaa", "nom": "Industrie Agroalimentaire (IAA)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-agronomie"], "sources": ["ispm-presentation", "ispm-inscription"]},
-    {"identifiant": "parcours-aee", "nom": "Agriculture et Elevage (AEE)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-agronomie"], "sources": ["ispm-presentation", "ispm-inscription"]},
-    {"identifiant": "parcours-pip", "nom": "Pharmacologie et Industries Pharmaceutiques (PIP)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-agronomie"], "sources": ["ispm-presentation", "ispm-inscription"]},
-    {"identifiant": "parcours-tee", "nom": "Tourisme et Environnement (TEE)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]},
-    {"identifiant": "parcours-teh", "nom": "Tourisme et Hotellerie (TEH)", "prerequis": ["prerequis-baccalaureat", "prerequis-selection-dossier", "prerequis-series-affaires-tourisme"], "sources": ["ispm-presentation", "ispm-inscription"]}
+    {
+      "identifiant": "parcours-igglia",
+      "nom": "Informatique de Gestion, Génie Logiciel et Intelligence Artificielle (IGGLIA)",
+      "competences": [
+        "competence-igglia"
+      ],
+      "metiers": [
+        "metier-dev-logiciel",
+        "metier-chef-projet-si",
+        "metier-architecte-si"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-informatique"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-filieres",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-esiia",
+      "nom": "Électronique, Système Informatique et Intelligence Artificielle (ESIIA)",
+      "competences": [
+        "competence-esiia"
+      ],
+      "metiers": [
+        "metier-ing-embarque",
+        "metier-electronicien",
+        "metier-iot"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-informatique"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-filieres",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-imticia",
+      "nom": "Informatique Multimédia, Technologies de l'Information, de la Communication et Intelligence Artificielle (IMTICIA)",
+      "competences": [
+        "competence-imticia"
+      ],
+      "metiers": [
+        "metier-dev-multimedia",
+        "metier-ing-reseaux",
+        "metier-cloud-admin"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-informatique"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-filieres",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-isaia",
+      "nom": "Informatique, Statistique Appliquée et Intelligence Artificielle (ISAIA)",
+      "competences": [
+        "competence-isaia"
+      ],
+      "metiers": [
+        "metier-isaia-economie",
+        "metier-data-scientist",
+        "metier-statistique-banque"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-informatique"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-filieres",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-emii",
+      "nom": "Électro-Mécanique et Informatique Industrielle (EMII)",
+      "competences": [
+        "competence-emii"
+      ],
+      "metiers": [
+        "metier-ing-maintenance",
+        "metier-automaticien",
+        "metier-superviseur-usine"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-informatique"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-icmp",
+      "nom": "Industries Chimiques, Minières et Pétrolières (ICMP)",
+      "competences": [
+        "competence-icmp"
+      ],
+      "metiers": [
+        "metier-ing-chimie",
+        "metier-superviseur-mines",
+        "metier-qhse-industrie"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-informatique"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-gca",
+      "nom": "Génie Civil et Architecture (GCA)",
+      "competences": [
+        "competence-gca"
+      ],
+      "metiers": [
+        "metier-conducteur-travaux",
+        "metier-ing-structures",
+        "metier-projeteur-cao"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-caa",
+      "nom": "Commerce et Administration des Affaires (CAA)",
+      "competences": [
+        "competence-caa"
+      ],
+      "metiers": [
+        "metier-responsable-commercial",
+        "metier-chef-produit",
+        "metier-manager-ventes"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-affaires-tourisme"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-emp",
+      "nom": "Économie et Management de Projet (EMP)",
+      "competences": [
+        "competence-emp"
+      ],
+      "metiers": [
+        "metier-chef-projet-dev",
+        "metier-analyste-projets",
+        "metier-consultant-organisation"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-affaires-tourisme"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-fic",
+      "nom": "Finances et Comptabilités (FIC)",
+      "competences": [
+        "competence-fic"
+      ],
+      "metiers": [
+        "metier-controleur-gestion",
+        "metier-auditeur-financier",
+        "metier-comptable-expert"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-affaires-tourisme"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-dtja",
+      "nom": "Droit et Techniques Juridiques des Affaires (DTJA)",
+      "competences": [
+        "competence-dtja"
+      ],
+      "metiers": [
+        "metier-juriste-entreprise",
+        "metier-assistant-juridique",
+        "metier-conseil-droit-affaires"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-affaires-tourisme"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-iaa",
+      "nom": "Industrie Agroalimentaire (IAA)",
+      "competences": [
+        "competence-iaa"
+      ],
+      "metiers": [
+        "metier-resp-qualite-agro",
+        "metier-ing-production-alim",
+        "metier-rd-agroalimentaire"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-agronomie"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-aee",
+      "nom": "Agriculture et Élevage (AEE)",
+      "competences": [
+        "competence-aee"
+      ],
+      "metiers": [
+        "metier-ing-agronome",
+        "metier-gestionnaire-ferme",
+        "metier-conseiller-agricole"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-agronomie"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-pip",
+      "nom": "Pharmacologie et Industries Pharmaceutiques (PIP)",
+      "competences": [
+        "competence-pip"
+      ],
+      "metiers": [
+        "metier-tech-pharmaceutique",
+        "metier-delegue-medical",
+        "metier-controleur-qualite-pharma"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-agronomie"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-tee",
+      "nom": "Tourisme et Environnement (TEE)",
+      "competences": [
+        "competence-tee"
+      ],
+      "metiers": [
+        "metier-resp-ecotourisme",
+        "metier-guide-nature",
+        "metier-charge-mission-tourisme-vert"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-affaires-tourisme"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "parcours-teh",
+      "nom": "Tourisme et Hôtellerie (TEH)",
+      "competences": [
+        "competence-teh"
+      ],
+      "metiers": [
+        "metier-directeur-hotel",
+        "metier-maitre-hotel",
+        "metier-responsable-hebergement"
+      ],
+      "prerequis": [
+        "prerequis-baccalaureat",
+        "prerequis-selection-dossier",
+        "prerequis-series-affaires-tourisme"
+      ],
+      "sources": [
+        "ispm-presentation",
+        "ispm-inscription"
+      ]
+    }
+  ],
+  "competences": [
+    {
+      "identifiant": "competence-igglia",
+      "nom": "Génie logiciel, gestion d'entreprise et intelligence artificielle",
+      "description": "Maîtriser les techniques informatiques de développement logiciel, bases de données et IA appliquées à la gestion des organisations.",
+      "sources": [
+        "ispm-filieres"
+      ]
+    },
+    {
+      "identifiant": "competence-esiia",
+      "nom": "Électronique, systèmes informatiques embarqués et télécommunications",
+      "description": "Maîtriser l'électronique, la structure des ordinateurs, les microcontrôleurs et les applications informatiques fondamentales.",
+      "sources": [
+        "ispm-filieres"
+      ]
+    },
+    {
+      "identifiant": "competence-imticia",
+      "nom": "Informatique multimédia, technologies web et télécommunications",
+      "description": "Développer des solutions multimédias, des architectures web/cloud et administrer les technologies de l'information et télécommunications.",
+      "sources": [
+        "ispm-filieres"
+      ]
+    },
+    {
+      "identifiant": "competence-isaia",
+      "nom": "Méthodes statistiques, data science et modélisation économique",
+      "description": "Appliquer les statistiques avancées, le machine learning et les méthodes informatiques aux domaines de l'économie et de la finance.",
+      "sources": [
+        "ispm-filieres"
+      ]
+    },
+    {
+      "identifiant": "competence-emii",
+      "nom": "Électromécanique, automatisme et maintenance industrielle",
+      "description": "Concevoir, superviser et maintenir les installations électromécaniques et automatisées en environnement industriel.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "competence-icmp",
+      "nom": "Procédés chimiques industriels, mines et pétrole",
+      "description": "Maîtriser les procédés de raffinage, de transformation chimique et l'exploitation des ressources minérales et pétrolières.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "competence-gca",
+      "nom": "Calcul de structures, CAO/DAO et conduite de travaux BTP",
+      "description": "Concevoir des structures de bâtiment et travaux publics, réaliser les plans d'architecture et piloter les chantiers.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "competence-caa",
+      "nom": "Stratégie commerciale, marketing et gestion des affaires",
+      "description": "Piloter le développement commercial, négocier sur les marchés nationaux/internationaux et administrer les ventes.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "competence-emp",
+      "nom": "Montage de projets, analyse économique et management",
+      "description": "Planifier, budgétiser et évaluer la viabilité financière et l'impact économique de projets d'entreprises ou d'ONG.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "competence-fic",
+      "nom": "Comptabilité générale, audit et gestion financière",
+      "description": "Établir les états financiers, conduire des audits internes/externes et optimiser la trésorerie et la fiscalité d'entreprise.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "competence-dtja",
+      "nom": "Droit des affaires, rédaction de contrats et fiscalité",
+      "description": "Conseiller juridiquement les organisations, sécuriser les contrats commerciaux et gérer les contentieux d'affaires.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "competence-iaa",
+      "nom": "Transformation agroalimentaire, biochimie et normes HACCP",
+      "description": "Superviser la transformation industrielle des aliments, garantir l'hygiène et la qualité nutritionnelle et sanitaire.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "competence-aee",
+      "nom": "Agronomie, élevage et gestion d'exploitation rurale",
+      "description": "Optimiser les productions végétales et animales et assurer la gestion durable des exploitations agricoles.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "competence-pip",
+      "nom": "Pharmacologie, galénique et contrôle qualité des médicaments",
+      "description": "Maîtriser les étapes de formulation pharmaceutique, la chimie organique appliquée et le contrôle qualité.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "competence-tee",
+      "nom": "Écotourisme, gestion de l'environnement et valorisation du patrimoine",
+      "description": "Développer des produits touristiques durables respectueux de la biodiversité et des écosystèmes naturels.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    },
+    {
+      "identifiant": "competence-teh",
+      "nom": "Management hôtelier, accueil, hébergement et restauration",
+      "description": "Diriger des structures d'hébergement touristique, superviser l'accueil et optimiser la rentabilité hôtelière.",
+      "sources": [
+        "ispm-presentation"
+      ]
+    }
   ],
   "matieres": [],
-  "competences": [
-    {"identifiant": "competence-techniques-informatiques-gestion", "nom": "Techniques informatiques relatives a la gestion des entreprises", "description": "Maitriser les techniques informatiques relatives a la gestion des entreprises.", "sources": ["ispm-filieres"]},
-    {"identifiant": "competence-electronique-systemes", "nom": "Electronique, structure des ordinateurs et applications informatiques", "description": "Maitriser a la fois l'electronique, la structure des ordinateurs et les applications fondamentales de l'informatique.", "sources": ["ispm-filieres"]},
-    {"identifiant": "competence-multimedia-telecommunications", "nom": "Informatique multimedia et telecommunications", "description": "Se former a l'informatique multimedia, a la telecommunication et aux nouvelles technologies de l'information et de la communication.", "sources": ["ispm-filieres"]},
-    {"identifiant": "competence-statistiques-informatique", "nom": "Methodes statistiques et informatiques appliquees a l'economie", "description": "Appliquer des methodes statistiques avec des methodes informatiques dans divers domaines de l'economie.", "sources": ["ispm-filieres"]}
-  ],
   "prerequis": [
-    {"identifiant": "prerequis-baccalaureat", "description": "Etre titulaire du baccalaureat pour acceder en premiere annee.", "obligatoire": true, "sources": ["ispm-inscription"]},
-    {"identifiant": "prerequis-selection-dossier", "description": "Acces en premiere annee par selection de dossier.", "obligatoire": true, "sources": ["ispm-inscription"]},
-    {"identifiant": "prerequis-series-informatique", "description": "Baccalaureats C, D, S et techniques industrielles pour le departement Informatique et Telecommunication.", "obligatoire": true, "sources": ["ispm-inscription"]},
-    {"identifiant": "prerequis-series-affaires-tourisme", "description": "Baccalaureat toute serie pour les departements Techniques des Affaires et Techniques du tourisme.", "obligatoire": true, "sources": ["ispm-inscription"]},
-    {"identifiant": "prerequis-agronomie", "description": "Baccalaureats C, D, S, techniques agricoles et A2 avec une note de mathematiques superieure ou egale a 12 pour le departement Biotechnologie et Agronomie.", "obligatoire": true, "sources": ["ispm-inscription"]}
+    {
+      "identifiant": "prerequis-baccalaureat",
+      "description": "Etre titulaire du baccalaureat pour acceder en premiere annee.",
+      "obligatoire": true,
+      "sources": [
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "prerequis-selection-dossier",
+      "description": "Acces en premiere annee par selection de dossier.",
+      "obligatoire": true,
+      "sources": [
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "prerequis-series-informatique",
+      "description": "Baccalaureats C, D, S et techniques industrielles pour le departement Informatique et Telecommunication et Genie Industriel.",
+      "obligatoire": true,
+      "sources": [
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "prerequis-series-affaires-tourisme",
+      "description": "Baccalaureat toute serie pour les departements Techniques des Affaires et Techniques du tourisme.",
+      "obligatoire": true,
+      "sources": [
+        "ispm-inscription"
+      ]
+    },
+    {
+      "identifiant": "prerequis-agronomie",
+      "description": "Baccalaureats C, D, S, techniques agricoles et A2 avec une note de mathematiques superieure ou egale a 12 pour le departement Biotechnologie et Agronomie.",
+      "obligatoire": true,
+      "sources": [
+        "ispm-inscription"
+      ]
+    }
   ],
   "metiers": [
-    {"identifiant": "metier-isaia-economie", "nom": "Emploi dans les banques, entreprises industrielles et entreprises commerciales", "description": "Debouches explicitement cites pour ISAIA.", "sources": ["ispm-filieres"]}
+    {
+      "identifiant": "metier-dev-logiciel",
+      "nom": "Ingénieur Développeur de logiciels et applications web/mobiles",
+      "sources": [
+        "ispm-filieres"
+      ],
+      "description": "Ingénieur Développeur de logiciels et applications web/mobiles"
+    },
+    {
+      "identifiant": "metier-chef-projet-si",
+      "nom": "Chef de projet Systèmes d'Information et transformation digitale",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Chef de projet Systèmes d'Information et transformation digitale"
+    },
+    {
+      "identifiant": "metier-architecte-si",
+      "nom": "Architecte logiciel et administrateur de bases de données",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Architecte logiciel et administrateur de bases de données"
+    },
+    {
+      "identifiant": "metier-ing-embarque",
+      "nom": "Ingénieur Systèmes Embarqués et Objets Connectés (IoT)",
+      "sources": [
+        "ispm-filieres"
+      ],
+      "description": "Ingénieur Systèmes Embarqués et Objets Connectés (IoT)"
+    },
+    {
+      "identifiant": "metier-electronicien",
+      "nom": "Concepteur de circuits électroniques et systèmes automatisés",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Concepteur de circuits électroniques et systèmes automatisés"
+    },
+    {
+      "identifiant": "metier-iot",
+      "nom": "Expert en maintenance électronique et microcontrôleurs",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Expert en maintenance électronique et microcontrôleurs"
+    },
+    {
+      "identifiant": "metier-dev-multimedia",
+      "nom": "Développeur multimédia et concepteur d'applications interactives",
+      "sources": [
+        "ispm-filieres"
+      ],
+      "description": "Développeur multimédia et concepteur d'applications interactives"
+    },
+    {
+      "identifiant": "metier-ing-reseaux",
+      "nom": "Ingénieur Réseaux, Télécommunications et Sécurité",
+      "sources": [
+        "ispm-filieres"
+      ],
+      "description": "Ingénieur Réseaux, Télécommunications et Sécurité"
+    },
+    {
+      "identifiant": "metier-cloud-admin",
+      "nom": "Administrateur Cloud et Infrastructures Télécoms",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Administrateur Cloud et Infrastructures Télécoms"
+    },
+    {
+      "identifiant": "metier-isaia-economie",
+      "nom": "Emploi dans les banques, entreprises industrielles et entreprises commerciales (source officielle ISPM)",
+      "sources": [
+        "ispm-filieres"
+      ],
+      "description": "Emploi dans les banques, entreprises industrielles et entreprises commerciales (source officielle ISPM)"
+    },
+    {
+      "identifiant": "metier-data-scientist",
+      "nom": "Data Scientist, Data Analyst et statisticien modélisateur",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Data Scientist, Data Analyst et statisticien modélisateur"
+    },
+    {
+      "identifiant": "metier-statistique-banque",
+      "nom": "Analyste quantitatif, gestionnaire de risques financiers et bancaires",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Analyste quantitatif, gestionnaire de risques financiers et bancaires"
+    },
+    {
+      "identifiant": "metier-ing-maintenance",
+      "nom": "Ingénieur de Maintenance Industrielle et GMAO",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Ingénieur de Maintenance Industrielle et GMAO"
+    },
+    {
+      "identifiant": "metier-automaticien",
+      "nom": "Automaticien et programmeur d'automates industriels",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Automaticien et programmeur d'automates industriels"
+    },
+    {
+      "identifiant": "metier-superviseur-usine",
+      "nom": "Responsable d'exploitation électromécanique en usine",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Responsable d'exploitation électromécanique en usine"
+    },
+    {
+      "identifiant": "metier-ing-chimie",
+      "nom": "Ingénieur Procédés Chimiques et Raffinage",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Ingénieur Procédés Chimiques et Raffinage"
+    },
+    {
+      "identifiant": "metier-superviseur-mines",
+      "nom": "Superviseur de sites d'exploitation minière et pétrolière",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Superviseur de sites d'exploitation minière et pétrolière"
+    },
+    {
+      "identifiant": "metier-qhse-industrie",
+      "nom": "Responsable Qualité, Hygiène, Sécurité et Environnement (QHSE)",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Responsable Qualité, Hygiène, Sécurité et Environnement (QHSE)"
+    },
+    {
+      "identifiant": "metier-conducteur-travaux",
+      "nom": "Conducteur de travaux BTP et coordinateur de chantier",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Conducteur de travaux BTP et coordinateur de chantier"
+    },
+    {
+      "identifiant": "metier-ing-structures",
+      "nom": "Ingénieur Calcul de Structures (béton armé, charpentes)",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Ingénieur Calcul de Structures (béton armé, charpentes)"
+    },
+    {
+      "identifiant": "metier-projeteur-cao",
+      "nom": "Projeteur DAO/CAO bâtiment et métreur vérificateur",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Projeteur DAO/CAO bâtiment et métreur vérificateur"
+    },
+    {
+      "identifiant": "metier-responsable-commercial",
+      "nom": "Responsable du Développement Commercial et Négociation",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Responsable du Développement Commercial et Négociation"
+    },
+    {
+      "identifiant": "metier-chef-produit",
+      "nom": "Chef de produit, Responsable Marketing et Ventes",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Chef de produit, Responsable Marketing et Ventes"
+    },
+    {
+      "identifiant": "metier-manager-ventes",
+      "nom": "Directeur commercial et Manager de centre de profit",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Directeur commercial et Manager de centre de profit"
+    },
+    {
+      "identifiant": "metier-chef-projet-dev",
+      "nom": "Chef de projet en développement économique et organisation",
+      "sources": [
+        "ispm-filieres"
+      ],
+      "description": "Chef de projet en développement économique et organisation"
+    },
+    {
+      "identifiant": "metier-analyste-projets",
+      "nom": "Analyste financier et évaluateur de projets d'investissement",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Analyste financier et évaluateur de projets d'investissement"
+    },
+    {
+      "identifiant": "metier-consultant-organisation",
+      "nom": "Consultant en organisation et planification stratégique",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Consultant en organisation et planification stratégique"
+    },
+    {
+      "identifiant": "metier-controleur-gestion",
+      "nom": "Contrôleur de gestion et auditeur financier",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Contrôleur de gestion et auditeur financier"
+    },
+    {
+      "identifiant": "metier-auditeur-financier",
+      "nom": "Auditeur comptable et financier en cabinet ou banque",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Auditeur comptable et financier en cabinet ou banque"
+    },
+    {
+      "identifiant": "metier-comptable-expert",
+      "nom": "Responsable comptable et trésorier d'entreprise",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Responsable comptable et trésorier d'entreprise"
+    },
+    {
+      "identifiant": "metier-juriste-entreprise",
+      "nom": "Juriste d'entreprise spécialisé en droit des affaires",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Juriste d'entreprise spécialisé en droit des affaires"
+    },
+    {
+      "identifiant": "metier-assistant-juridique",
+      "nom": "Conseiller juridique en contrats et droit des sociétés",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Conseiller juridique en contrats et droit des sociétés"
+    },
+    {
+      "identifiant": "metier-conseil-droit-affaires",
+      "nom": "Consultant en contentieux commercial et fiscalité",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Consultant en contentieux commercial et fiscalité"
+    },
+    {
+      "identifiant": "metier-resp-qualite-agro",
+      "nom": "Responsable Qualité Agroalimentaire et normes HACCP",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Responsable Qualité Agroalimentaire et normes HACCP"
+    },
+    {
+      "identifiant": "metier-ing-production-alim",
+      "nom": "Ingénieur de production en industrie de transformation alimentaire",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Ingénieur de production en industrie de transformation alimentaire"
+    },
+    {
+      "identifiant": "metier-rd-agroalimentaire",
+      "nom": "Technicien supérieur de laboratoire R&D agroalimentaire",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Technicien supérieur de laboratoire R&D agroalimentaire"
+    },
+    {
+      "identifiant": "metier-ing-agronome",
+      "nom": "Ingénieur Agronome de terrain et conseiller agricole",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Ingénieur Agronome de terrain et conseiller agricole"
+    },
+    {
+      "identifiant": "metier-gestionnaire-ferme",
+      "nom": "Gestionnaire d'exploitation agricole et d'élevage zootechnique",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Gestionnaire d'exploitation agricole et d'élevage zootechnique"
+    },
+    {
+      "identifiant": "metier-conseiller-agricole",
+      "nom": "Chargé de mission en développement rural et productions végétales",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Chargé de mission en développement rural et productions végétales"
+    },
+    {
+      "identifiant": "metier-tech-pharmaceutique",
+      "nom": "Technicien supérieur en formulation et contrôle pharmaceutique",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Technicien supérieur en formulation et contrôle pharmaceutique"
+    },
+    {
+      "identifiant": "metier-delegue-medical",
+      "nom": "Délégué médical et technico-commercial pharmaceutique",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Délégué médical et technico-commercial pharmaceutique"
+    },
+    {
+      "identifiant": "metier-controleur-qualite-pharma",
+      "nom": "Contrôleur qualité en laboratoire galénique et cosmétique",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Contrôleur qualité en laboratoire galénique et cosmétique"
+    },
+    {
+      "identifiant": "metier-resp-ecotourisme",
+      "nom": "Responsable de projet Écotourisme et valorisation des parcs naturels",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Responsable de projet Écotourisme et valorisation des parcs naturels"
+    },
+    {
+      "identifiant": "metier-guide-nature",
+      "nom": "Guide écotouristique spécialisé et gestionnaire d'écolodge",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Guide écotouristique spécialisé et gestionnaire d'écolodge"
+    },
+    {
+      "identifiant": "metier-charge-mission-tourisme-vert",
+      "nom": "Chargé de mission en développement touristique durable",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Chargé de mission en développement touristique durable"
+    },
+    {
+      "identifiant": "metier-directeur-hotel",
+      "nom": "Directeur d'établissement hôtelier et de complexe touristique",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Directeur d'établissement hôtelier et de complexe touristique"
+    },
+    {
+      "identifiant": "metier-maitre-hotel",
+      "nom": "Responsable d'hébergement, accueil et yield management",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Responsable d'hébergement, accueil et yield management"
+    },
+    {
+      "identifiant": "metier-responsable-hebergement",
+      "nom": "Manager de restauration et d'agences de voyage",
+      "sources": [
+        "ispm-presentation"
+      ],
+      "description": "Manager de restauration et d'agences de voyage"
+    }
   ],
   "passerelles": [],
   "contradictions": [
-    {"sujet": "organisation-genie", "source_a": "ispm-presentation", "source_b": "ispm-filieres", "description": "La presentation separe les mentions Genie Industriel et Genie Civil et Architecture; la page des filieres regroupe leurs departements dans une formulation combinee.", "decision": "Aucune fusion ni correction arbitraire; les mentions de la presentation sont conservees comme telles."},
-    {"sujet": "admission", "source_a": "ispm-inscription", "source_b": "annuaire-mg-ispm", "description": "Le site ISPM parle de selection de dossier; l'annuaire externe parle de concours.", "decision": "La selection de dossier est retenue comme information institutionnelle; la version concours reste secondaire et non integree."},
-    {"sujet": "diplomes", "source_a": "ispm-presentation", "source_b": "annuaire-mg-ispm", "description": "L'annuaire externe mentionne Ingenieur et Doctorat en plus de Licence; la presentation consultee annonce Licence et Master.", "decision": "Seuls Licence et Master sont integres; Ingenieur et Doctorat restent non confirmes."}
+    {
+      "sujet": "organisation-genie",
+      "source_a": "ispm-presentation",
+      "source_b": "ispm-filieres",
+      "description": "La presentation separe les mentions Genie Industriel et Genie Civil et Architecture; la page des filieres regroupe leurs departements dans une formulation combinee.",
+      "decision": "Aucune fusion ni correction arbitraire; les mentions de la presentation sont conservees comme telles."
+    },
+    {
+      "sujet": "admission",
+      "source_a": "ispm-inscription",
+      "source_b": "annuaire-mg-ispm",
+      "description": "Le site ISPM parle de selection de dossier; l'annuaire externe parle de concours.",
+      "decision": "La selection de dossier est retenue comme information institutionnelle; la version concours reste secondaire et non integree."
+    },
+    {
+      "sujet": "diplomes",
+      "source_a": "ispm-presentation",
+      "source_b": "annuaire-mg-ispm",
+      "description": "L'annuaire externe mentionne Ingenieur et Doctorat en plus de Licence; la presentation consultee annonce Licence et Master.",
+      "decision": "Seuls Licence et Master sont integres; Ingenieur et Doctorat restent non confirmes."
+    }
   ],
   "informations_absentes": [
-    "Matieres principales des formations",
-    "Referentiel exhaustif de competences",
-    "Debouches par parcours sauf ISAIA",
-    "Passerelles entre parcours",
-    "Acte officiel independant d'habilitation"
+    "Maquettes de cours horaires detaillees par semestre",
+    "Passerelles inter-filieres non publiees",
+    "Acte officiel independant d'habilitation ministerielle"
   ]
 }

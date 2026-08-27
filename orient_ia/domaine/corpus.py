@@ -42,14 +42,14 @@ def charger_corpus(chemin: Path) -> CorpusPedagogique:
     corpus = CorpusPedagogique(
         version=donnees["version"],
         sources=sources,
-        mentions=tuple(Mention(**item) for item in donnees["mentions"]),
-        formations=tuple(Formation(**item) for item in donnees["formations"]),
-        parcours=tuple(Parcours(**item) for item in donnees["parcours"]),
-        matieres=tuple(Matiere(**item) for item in donnees["matieres"]),
-        competences=tuple(Competence(**item) for item in donnees["competences"]),
-        prerequis=tuple(Prerequis(**item) for item in donnees["prerequis"]),
-        metiers=tuple(Metier(**item) for item in donnees["metiers"]),
-        passerelles=tuple(Passerelle(**item) for item in donnees["passerelles"]),
+        mentions=tuple(Mention(identifiant=item["identifiant"], nom=item["nom"], parcours=tuple(item.get("parcours", ())), sources=tuple(item.get("sources", ()))) for item in donnees["mentions"]),
+        formations=tuple(Formation(identifiant=item["identifiant"], nom=item["nom"], mentions=tuple(item.get("mentions", ())), niveau=item.get("niveau", ""), sources=tuple(item.get("sources", ()))) for item in donnees["formations"]),
+        parcours=tuple(Parcours(identifiant=item["identifiant"], nom=item["nom"], matieres=tuple(item.get("matieres", ())), competences=tuple(item.get("competences", ())), prerequis=tuple(item.get("prerequis", ())), metiers=tuple(item.get("metiers", ())), sources=tuple(item.get("sources", ()))) for item in donnees["parcours"]),
+        matieres=tuple(Matiere(identifiant=item["identifiant"], nom=item["nom"], sources=tuple(item.get("sources", ()))) for item in donnees["matieres"]),
+        competences=tuple(Competence(identifiant=item["identifiant"], nom=item["nom"], description=item.get("description", ""), sources=tuple(item.get("sources", ()))) for item in donnees["competences"]),
+        prerequis=tuple(Prerequis(identifiant=item["identifiant"], description=item["description"], obligatoire=item.get("obligatoire", True), sources=tuple(item.get("sources", ()))) for item in donnees["prerequis"]),
+        metiers=tuple(Metier(identifiant=item["identifiant"], nom=item["nom"], description=item.get("description", ""), sources=tuple(item.get("sources", ()))) for item in donnees["metiers"]),
+        passerelles=tuple(Passerelle(identifiant=item["identifiant"], source=item["source"], cible=item["cible"], description=item.get("description", ""), sources=tuple(item.get("sources", ()))) for item in donnees["passerelles"]),
     )
     corpus.valider(exiger_provenance=True)
     return corpus
