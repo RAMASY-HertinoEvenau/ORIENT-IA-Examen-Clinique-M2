@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import inspect
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from orient_ia.agent.orchestrateur import traiter_message
 from orient_ia.api.schemas import AgentChatRequest, RecommandationRequest
@@ -40,6 +43,14 @@ def _appeler_service(service_instance: RecommendationService, payload: dict[str,
 
 def create_app(service: RecommendationService | None = None) -> FastAPI:
     app = FastAPI(title="ORIENT'IA", version="0.1.0")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
     service_instance = service or RecommendationService()
 
     @app.get("/health")
@@ -58,6 +69,10 @@ def create_app(service: RecommendationService | None = None) -> FastAPI:
             profil=profil_payload,
             session_id=req.session_id,
         )
+
+    dossier_interface = Path(__file__).resolve().parents[2] / "interface"
+    if dossier_interface.exists():
+        app.mount("/", StaticFiles(directory=str(dossier_interface), html=True), name="interface")
 
     return app
 

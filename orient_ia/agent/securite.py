@@ -29,6 +29,8 @@ _MOTS_SENSIBLES = {
     "âge",
     "date de naissance",
     "nationalité",
+    "personnalité",
+    "psychologique",
 }
 
 

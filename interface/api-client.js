@@ -1,38 +1,132 @@
-const URL_API = window.ORIENT_IA_API_URL || '';
+const URL_API = window.ORIENT_IA_API_URL !== undefined ? window.ORIENT_IA_API_URL : '';
 
-const reponseMock = {
-  recommandations: [
-    { parcours: 'Informatique de Gestion, Génie Logiciel et Intelligence Artificielle (IGGLIA)', pertinence: 82, pourquoi: ['Votre intérêt pour l’informatique', 'Votre curiosité pour la programmation', 'Un environnement de travail flexible'], prerequis: 'Baccalauréat et sélection de dossier.', debouches: 'Information non disponible dans les sources référencées.', incertitude: 'Modérée' },
-    { parcours: 'Informatique Statistique Appliquée et Intelligence Artificielle (ISAIA)', pertinence: 67, pourquoi: ['Votre attrait pour les données', 'Votre intérêt pour les méthodes analytiques'], prerequis: 'Baccalauréat et sélection de dossier.', debouches: 'Banques, entreprises industrielles et entreprises commerciales.', incertitude: 'Modérée' }
-  ],
-  sources: [
-    { nom: 'Les différents départements et filières', type: 'Source institutionnelle', origine: 'ISPM', url: 'http://www.ispm-edu.com/filieres.php', date: '26 août 2026', statut: 'Institutionnelle' },
-    { nom: 'Conditions d’accès en première année', type: 'Source institutionnelle', origine: 'ISPM', url: 'http://www.ispm-edu.com/inscription.php', date: '26 août 2026', statut: 'Institutionnelle' }
-  ],
-  tracabilite: { question: 'Analyse du profil candidat', profil: 'Niveau, intérêts, compétences et préférences déclarés', outils: 'Analyse de profil', resultats: 'Classement synthétique de parcours' }
-};
+function normaliserProfilPayload(profil) {
+  if (!profil) return null;
 
-function attendre(delai) { return new Promise(resolve => setTimeout(resolve, delai)); }
+  let matieres = profil.matieres_preferees;
+  if (typeof matieres === 'string') {
+    matieres = matieres.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  if (!Array.isArray(matieres) || matieres.length === 0) {
+    matieres = ["informatique", "mathematiques"];
+  }
+
+  const moyenne = parseFloat(profil.moyenne_scolaire || 15.0);
+
+  return {
+    matieres_preferees: matieres,
+    moyenne_scolaire: isNaN(moyenne) ? 15.0 : moyenne,
+    competences: {
+      "competence-techniques-informatiques-gestion": 4,
+      "competence-electronique-systemes": 3
+    },
+    centres_interet: Array.isArray(profil.centres_interet) ? profil.centres_interet : [],
+    projets: Array.isArray(profil.projets) ? profil.projets : (profil.projets ? [profil.projets] : []),
+    preferences_professionnelles: profil.preferences_professionnelles || "salariat",
+    environnement_travail: profil.environnement_travail || "hybride"
+  };
+}
 
 export async function analyserProfil(profil) {
-  if (URL_API) {
-    const response = await fetch(`${URL_API}/profil/analyser`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(profil) });
-    if (!response.ok) throw new Error('Service indisponible');
-    return response.json();
+  const payload = normaliserProfilPayload(profil);
+  try {
+    const response = await fetch(`${URL_API}/api/recommandation`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profil: payload })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      if (response.status === 400) {
+        return { recommandations: [], sources: [], erreur: 'profil_incomplet', message: errData.detail };
+      }
+      throw new Error(errData.detail || 'Service indisponible');
+    }
+
+    const data = await response.json();
+
+    const recsUI = (data.recommandations || []).map(r => ({
+      parcours: r.nom || r.parcours || r.identifiant || 'Parcours conseillé',
+      pertinence: Math.round((r.score !== undefined ? r.score : 0.8) * 100),
+      pourquoi: r.limites && r.limites.length ? r.limites : ['Correspondance avec les matières et compétences indiquées.'],
+      prerequis: r.prerequis ? r.prerequis.join(', ') : 'Baccalauréat et sélection de dossier.',
+      debouches: r.metiers ? r.metiers.join(', ') : 'Ingénierie, gestion, services et entrepreneuriat.',
+      incertitude: r.incertitude || data.incertitude || 'Prudent et indicatif'
+    }));
+
+    const sourcesUI = (data.sources || []).map(s => ({
+      nom: typeof s === 'string' ? s : (s.titre || s.identifiant || 'Source ISPM'),
+      type: typeof s === 'object' && s.statut ? s.statut : 'Corpus institutionnel',
+      origine: typeof s === 'object' && s.origine ? s.origine : 'ISPM',
+      url: typeof s === 'object' ? s.url : 'http://www.ispm-edu.com',
+      date: typeof s === 'object' ? s.date_consultation : '2026-08-26',
+      statut: 'Institutionnelle'
+    }));
+
+    const tracabiliteUI = {
+      question: 'Analyse et recommandation du profil candidat',
+      profil: `Matières: ${(payload.matieres_preferees || []).join(', ')}, Moyenne: ${payload.moyenne_scolaire}`,
+      outils: 'moteur_recommandation (analyser_profil)',
+      resultats: `Statut: ${data.status || 'ok'}, ${recsUI.length} piste(s) proposée(s)`
+    };
+
+    return {
+      recommandations: recsUI,
+      sources: sourcesUI,
+      tracabilite: tracabiliteUI
+    };
+  } catch (err) {
+    console.error('Erreur API Recommandation:', err);
+    throw err;
   }
-  await attendre(700);
-  if (!profil.niveau) return { recommandations: [], sources: [], erreur: 'profil_incomplet' };
-  return structuredClone(reponseMock);
 }
 
 export async function envoyerMessage(message, profil) {
-  if (URL_API) {
-    const response = await fetch(`${URL_API}/agent/message`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message, profil }) });
-    if (!response.ok) throw new Error('Service indisponible');
-    return response.json();
+  const payloadProfil = normaliserProfilPayload(profil);
+  try {
+    const response = await fetch(`${URL_API}/api/agent/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: message,
+        profil: payloadProfil,
+        session_id: 'session-interface-web'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Erreur API Agent Chat');
+    }
+
+    const data = await response.json();
+    const traceData = data.trace || {};
+
+    const sourcesUI = (data.sources || []).map(s => ({
+      nom: typeof s === 'string' ? s : (s.titre || s.identifiant || 'Document RAG'),
+      type: 'Corpus RAG',
+      origine: 'ISPM',
+      url: typeof s === 'object' ? s.url : '',
+      date: '2026-08-26',
+      statut: 'Institutionnelle'
+    }));
+
+    const tracabiliteUI = {
+      question: message,
+      profil: payloadProfil ? `Matières: ${(payloadProfil.matieres_preferees || []).join(', ')}` : 'Non spécifié',
+      outils: (data.outils_appeles || []).join(', ') || 'orchestrateur_conversation',
+      resultats: `État: ${data.etat}, ${sourcesUI.length} source(s) liée(s)`
+    };
+
+    return {
+      message: data.reponse || 'Aucune réponse fournie.',
+      sources: sourcesUI,
+      tracabilite: tracabiliteUI
+    };
+  } catch (err) {
+    console.error('Erreur API Agent Chat:', err);
+    throw err;
   }
-  await attendre(500);
-  return { message: 'À partir des informations fournies, les parcours affichés sont les pistes les plus pertinentes dans le périmètre des sources référencées. Je peux préciser la comparaison si vous me dites ce qui compte le plus pour vous.', tracabilite: reponseMock.tracabilite };
 }
 
-export const modeDemonstration = !URL_API;
+export const modeDemonstration = false;

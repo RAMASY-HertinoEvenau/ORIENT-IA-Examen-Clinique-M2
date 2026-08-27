@@ -72,7 +72,7 @@ def orchestrer_conversation(message: str, profil: Mapping[str, Any] | None = Non
     texte = (message or "").strip()
     trace = TraceConversation(session_id=session_id, message=texte, etat="analyse", donnees_profil=dict(profil_normalise))
 
-    if "comparer" in texte.lower() or "comparaison" in texte.lower():
+    if any(k in texte.lower() for k in ("comparer", "comparaison", "compare")):
         trace.outils_appeles.append("comparer_parcours")
         mots_nettoyes = (
             texte.lower()
