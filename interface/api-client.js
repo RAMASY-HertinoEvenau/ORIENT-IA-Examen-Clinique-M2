@@ -46,29 +46,47 @@ export async function analyserProfil(profil) {
 
     const data = await response.json();
 
-    const recsUI = (data.recommandations || []).map(r => ({
-      parcours: r.nom || r.parcours || r.identifiant || 'Parcours conseillé',
-      pertinence: Math.round((r.score !== undefined ? r.score : 0.8) * 100),
-      pourquoi: r.limites && r.limites.length ? r.limites : ['Correspondance avec les matières et compétences indiquées.'],
-      prerequis: r.prerequis ? r.prerequis.join(', ') : 'Baccalauréat et sélection de dossier.',
-      debouches: r.metiers ? r.metiers.join(', ') : 'Ingénierie, gestion, services et entrepreneuriat.',
-      incertitude: r.incertitude || data.incertitude || 'Prudent et indicatif'
-    }));
+    const recsUI = (data.recommandations || []).map(r => {
+      const nomFormation = (r.formation && r.formation.nom) || r.nom || r.parcours || r.identifiant || 'Parcours ISPM';
+      
+      const raisons = r.raisons_liees_au_profil || [];
+      const corpus = r.elements_du_corpus || [];
+      const pourquoi = [...raisons, ...corpus].filter(Boolean);
+      if (pourquoi.length === 0) {
+        pourquoi.push("Correspondance élevée avec le profil académique et les compétences indiquées.");
+      }
 
-    const sourcesUI = (data.sources || []).map(s => ({
-      nom: typeof s === 'string' ? s : (s.titre || s.identifiant || 'Source ISPM'),
-      type: typeof s === 'object' && s.statut ? s.statut : 'Corpus institutionnel',
-      origine: typeof s === 'object' && s.origine ? s.origine : 'ISPM',
-      url: typeof s === 'object' ? s.url : 'http://www.ispm-edu.com',
-      date: typeof s === 'object' ? s.date_consultation : '2026-08-26',
-      statut: 'Institutionnelle'
-    }));
+      // Recherche des prérequis et débouchés dans le corpus
+      const pReq = corpus.find(e => e.toLowerCase().includes("prérequis")) || "Baccalauréat (Séries C, D, S, Industrielles ou Tertiaires selon département) et sélection de dossier.";
+      const deb = corpus.find(e => e.toLowerCase().includes("débouchés") || e.toLowerCase().includes("métiers")) || "Débouche sur des postes d'ingénierie, de gestion, de conseil et d'entrepreneuriat.";
+
+      return {
+        parcours: nomFormation,
+        pertinence: Math.round((r.score !== undefined ? r.score : 0.8) * 100),
+        pourquoi: pourquoi,
+        prerequis: pReq.replace(/^Prérequis publiés:\s*/i, ''),
+        debouches: deb.replace(/^Débouchés ou métiers documentés dans le corpus:\s*/i, ''),
+        incertitude: r.incertitude || data.incertitude || 'Prudent et indicatif'
+      };
+    });
+
+    const sourcesUI = (data.sources || []).map(s => {
+      const isObj = typeof s === 'object' && s !== null;
+      return {
+        nom: isObj ? (s.titre || s.nom || s.identifiant || 'Source institutionnelle ISPM') : String(s),
+        type: (isObj && s.statut) ? `Source ${s.statut}` : 'Corpus institutionnel',
+        origine: (isObj && s.origine) ? s.origine : 'Institut Supérieur Polytechnique de Madagascar',
+        url: isObj ? (s.url || 'http://www.ispm-edu.com') : 'http://www.ispm-edu.com',
+        date: (isObj && (s.date_consultation || s.date)) ? (s.date_consultation || s.date) : '26 août 2026',
+        statut: 'Institutionnelle'
+      };
+    });
 
     const tracabiliteUI = {
       question: 'Analyse et recommandation du profil candidat',
-      profil: `Matières: ${(payload.matieres_preferees || []).join(', ')}, Moyenne: ${payload.moyenne_scolaire}`,
+      profil: `Niveau: ${profil.niveau || 'Baccalauréat'}, Matières: ${(payload.matieres_preferees || []).join(', ')}, Moyenne: ${payload.moyenne_scolaire}/20`,
       outils: 'moteur_recommandation (analyser_profil)',
-      resultats: `Statut: ${data.status || 'ok'}, ${recsUI.length} piste(s) proposée(s)`
+      resultats: `Statut: ${data.status || 'ok'}, ${recsUI.length} parcours recommandés par le modèle ML ExtraTrees gelé`
     };
 
     return {
@@ -100,22 +118,24 @@ export async function envoyerMessage(message, profil) {
     }
 
     const data = await response.json();
-    const traceData = data.trace || {};
 
-    const sourcesUI = (data.sources || []).map(s => ({
-      nom: typeof s === 'string' ? s : (s.titre || s.identifiant || 'Document RAG'),
-      type: 'Corpus RAG',
-      origine: 'ISPM',
-      url: typeof s === 'object' ? s.url : '',
-      date: '2026-08-26',
-      statut: 'Institutionnelle'
-    }));
+    const sourcesUI = (data.sources || []).map(s => {
+      const isObj = typeof s === 'object' && s !== null;
+      return {
+        nom: isObj ? (s.titre || s.nom || s.identifiant || 'Document RAG') : String(s),
+        type: 'Corpus RAG',
+        origine: 'ISPM',
+        url: isObj ? s.url : 'http://www.ispm-edu.com',
+        date: '26 août 2026',
+        statut: 'Institutionnelle'
+      };
+    });
 
     const tracabiliteUI = {
       question: message,
       profil: payloadProfil ? `Matières: ${(payloadProfil.matieres_preferees || []).join(', ')}` : 'Non spécifié',
       outils: (data.outils_appeles || []).join(', ') || 'orchestrateur_conversation',
-      resultats: `État: ${data.etat}, ${sourcesUI.length} source(s) liée(s)`
+      resultats: `État: ${data.etat}, ${sourcesUI.length} source(s) documentaire(s) extraite(s)`
     };
 
     return {
