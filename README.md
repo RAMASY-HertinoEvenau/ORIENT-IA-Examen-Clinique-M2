@@ -49,13 +49,18 @@ pip install -e .
 ## 3. Exécution de l'Application
 
 ### Étape 1 : Démarrer le Serveur Backend API
+
+Vous pouvez lancer le serveur avec la commande Python standard (sans dépendance requise) :
 ```powershell
-uvicorn orient_ia.api.serveur:app --reload --port 8000
+python -m orient_ia.api.serveur
 ```
-*L'API est alors disponible sur `http://localhost:8000` (documentation Swagger interactive sur `http://localhost:8000/docs`).*
+
+*(Ou avec uvicorn si installé : `uvicorn orient_ia.api.serveur:app --reload --port 8000`)*
+
+*L'API est alors disponible sur `http://localhost:8000`.*
 
 ### Étape 2 : Lancer l'Interface Web Utilisateur
-Ouvrez simplement le fichier `interface/index.html` dans votre navigateur Web moderne (Chrome, Firefox, Edge).
+Ouvrez simplement le fichier `interface/index.html` dans votre navigateur Web (Chrome, Firefox, Edge).
 L'interface se connecte automatiquement au backend `http://localhost:8000`.
 
 ---

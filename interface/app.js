@@ -44,7 +44,7 @@ function afficherChargement() {
 }
 
 function afficherRecommandations(resultat) {
-  if (resultat.erreur === 'profil_incomplet') {
+  if (!resultat || resultat.erreur === 'profil_incomplet') {
     resultCount.textContent = 'Profil incomplet';
     recommendations.innerHTML = '<div class="recommendations-empty"><div class="empty-symbol" aria-hidden="true">!</div><h3>Certaines informations sont nécessaires.</h3><p>Indiquez au moins votre niveau d’étude pour améliorer la recommandation.</p></div>';
     return;
@@ -55,12 +55,17 @@ function afficherRecommandations(resultat) {
     recommendations.innerHTML = '<div class="recommendations-empty"><h3>Aucune formation correspondante trouvée.</h3><p>Aucune formation correspondant aux informations disponibles n’a été trouvée dans les sources référencées.</p></div>';
     return;
   }
-  recommendations.innerHTML = `<div class="recommendation-list">${items.map((item, index) => `
-    <article class="recommendation-card"><span class="recommendation-rank">0${index + 1}</span><h3>${echapper(item.parcours)}</h3>
-      <div class="relevance"><span>Pertinence</span><div class="bar"><i style="width:${item.pertinence}%"></i></div><span>${item.pertinence}%</span></div>
-      <div class="detail-grid"><div><strong>Pourquoi cette piste ?</strong><p>${item.pourquoi.map(echapper).join('<br>')}</p></div><div><strong>Prérequis</strong><p>${echapper(item.prerequis)}</p></div><div><strong>Débouchés</strong><p>${echapper(item.debouches)}</p></div></div>
-      <span class="uncertainty">Incertitude : ${echapper(item.incertitude)}</span>
-    </article>`).join('')}</div>`;
+  recommendations.innerHTML = `<div class="recommendation-list">${items.map((item, index) => {
+    const pourquoiHtml = Array.isArray(item.pourquoi) ? item.pourquoi.map(echapper).join('<br>') : echapper(item.pourquoi || 'Profil compatible');
+    const prerequisHtml = echapper(item.prerequis || 'Sélection sur dossier BACC');
+    const debouchesHtml = echapper(item.debouches || 'Information non documentée');
+    return `
+    <article class="recommendation-card"><span class="recommendation-rank">0${index + 1}</span><h3>${echapper(item.parcours || '')}</h3>
+      <div class="relevance"><span>Pertinence</span><div class="bar"><i style="width:${item.pertinence || 50}%"></i></div><span>${item.pertinence || 50}%</span></div>
+      <div class="detail-grid"><div><strong>Pourquoi cette piste ?</strong><p>${pourquoiHtml}</p></div><div><strong>Prérequis</strong><p>${prerequisHtml}</p></div><div><strong>Débouchés</strong><p>${debouchesHtml}</p></div></div>
+      <span class="uncertainty">Incertitude : ${echapper(item.incertitude || 'Modérée')}</span>
+    </article>`;
+  }).join('')}</div>`;
 }
 
 function afficherSources(sources = []) {
