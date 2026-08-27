@@ -84,95 +84,129 @@ class BoiteAOutilsAgent:
     # --- Outil 2 : Inférence du profil candidat avec modèle ML ---
     def analyser_profil_ml(self, profil_candidat: Dict[str, Any], top_n: int = 3) -> Dict[str, Any]:
         """Analyse le profil du candidat via le modèle de Machine Learning et le moteur RAG."""
-        # 1. Règles d'adéquation expertes & heuristiques
-        centres = profil_candidat.get("centres_interet", [])
-        centres_str = ", ".join(centres) if isinstance(centres, list) else str(centres)
+        import unicodedata
 
-        matieres = profil_candidat.get("matieres_preferees", [])
-        matieres_str = ", ".join(matieres) if isinstance(matieres, list) else str(matieres)
+        def _clean_str(txt: Any) -> str:
+            raw = ", ".join(txt) if isinstance(txt, list) else str(txt or "")
+            return unicodedata.normalize('NFKD', raw).encode('ASCII', 'ignore').decode('utf-8').lower()
 
-        # Base de score pour chaque parcours
+        centres_raw = profil_candidat.get("centres_interet", [])
+        centres_str = ", ".join(centres_raw) if isinstance(centres_raw, list) else str(centres_raw or "")
+        centres_clean = _clean_str(centres_raw)
+
+        matieres_raw = profil_candidat.get("matieres_preferees", [])
+        matieres_str = ", ".join(matieres_raw) if isinstance(matieres_raw, list) else str(matieres_raw or "")
+        matieres_clean = _clean_str(matieres_raw)
+
+        projets_raw = profil_candidat.get("projets", [])
+        projets_clean = _clean_str(projets_raw)
+
+        texte_global = f"{centres_clean} {matieres_clean} {projets_clean}".strip()
+
+        # Initialisation neutre de tous les 16 parcours
         scores_profil = {
-            "parcours-igglia": 0.5,
-            "parcours-isaia": 0.4,
-            "parcours-esiia": 0.4,
-            "parcours-imticia": 0.4,
-            "parcours-emii": 0.3,
-            "parcours-icmp": 0.3,
-            "parcours-gca": 0.3,
-            "parcours-caa": 0.3,
-            "parcours-emp": 0.3,
-            "parcours-fic": 0.3,
-            "parcours-dtja": 0.3,
-            "parcours-iaa": 0.3,
-            "parcours-aee": 0.3,
-            "parcours-pip": 0.3,
-            "parcours-tee": 0.3,
-            "parcours-teh": 0.3,
+            "parcours-igglia": 0.1,
+            "parcours-isaia": 0.1,
+            "parcours-esiia": 0.1,
+            "parcours-imticia": 0.1,
+            "parcours-emii": 0.1,
+            "parcours-icmp": 0.1,
+            "parcours-gca": 0.1,
+            "parcours-caa": 0.1,
+            "parcours-emp": 0.1,
+            "parcours-fic": 0.1,
+            "parcours-dtja": 0.1,
+            "parcours-iaa": 0.1,
+            "parcours-aee": 0.1,
+            "parcours-pip": 0.1,
+            "parcours-tee": 0.1,
+            "parcours-teh": 0.1,
         }
 
-        # Pondération selon centres d'intérêt
-        for c in centres:
-            c_low = c.lower()
-            if "donnee" in c_low or "data" in c_low or "stat" in c_low:
-                scores_profil["parcours-isaia"] += 0.85
-            if "info" in c_low or "dev" in c_low or "ia" in c_low or "logiciel" in c_low:
-                scores_profil["parcours-igglia"] += 0.4
-                scores_profil["parcours-imticia"] += 0.25
-                scores_profil["parcours-isaia"] += 0.25
-            if "math" in c_low or "banque" in c_low or "finance" in c_low:
-                scores_profil["parcours-isaia"] += 0.45
-                scores_profil["parcours-fic"] += 0.2
-            if "electro" in c_low or "embarque" in c_low or "robot" in c_low or "circuit" in c_low:
-                scores_profil["parcours-esiia"] += 0.45
-                scores_profil["parcours-emii"] += 0.25
-            if "commerce" in c_low or "vente" in c_low or "marketing" in c_low:
-                scores_profil["parcours-caa"] += 0.8
-            if "manage" in c_low or "gest" in c_low or "projet" in c_low:
-                scores_profil["parcours-emp"] += 0.4
-                scores_profil["parcours-caa"] += 0.35
-            if "eco" in c_low or "agri" in c_low or "elevage" in c_low or "terre" in c_low:
-                scores_profil["parcours-aee"] += 0.45
-                scores_profil["parcours-iaa"] += 0.3
-            if "sante" in c_low or "pharma" in c_low or "med" in c_low:
-                scores_profil["parcours-pip"] += 0.5
-            if "droit" in c_low or "juridique" in c_low or "loi" in c_low:
-                scores_profil["parcours-dtja"] += 0.5
-            if "tourisme" in c_low or "voyage" in c_low or "hotel" in c_low:
-                scores_profil["parcours-teh"] += 0.4
-                scores_profil["parcours-tee"] += 0.4
-            if "btp" in c_low or "archi" in c_low or "construct" in c_low or "genie civil" in c_low or "batiment" in c_low:
-                scores_profil["parcours-gca"] += 0.5
-            if "chimie" in c_low or "mine" in c_low or "petrole" in c_low:
-                scores_profil["parcours-icmp"] += 0.5
+        raisons_parcours: Dict[str, List[str]] = {k: [] for k in scores_profil}
 
-        # Pondération selon matières préférées
-        for m in matieres:
-            m_low = m.lower()
-            if "math" in m_low or "algo" in m_low:
-                scores_profil["parcours-isaia"] += 0.3
-                scores_profil["parcours-igglia"] += 0.25
-            if "physique" in m_low or "chimie" in m_low:
-                scores_profil["parcours-esiia"] += 0.2
-                scores_profil["parcours-icmp"] += 0.3
-                scores_profil["parcours-gca"] += 0.2
-            if "svt" in m_low or "bio" in m_low or "nature" in m_low:
-                scores_profil["parcours-iaa"] += 0.3
-                scores_profil["parcours-aee"] += 0.3
-                scores_profil["parcours-pip"] += 0.3
-            if "francais" in m_low or "philo" in m_low or "langue" in m_low or "anglais" in m_low:
-                scores_profil["parcours-dtja"] += 0.25
-                scores_profil["parcours-caa"] += 0.25
-                scores_profil["parcours-teh"] += 0.25
+        # 1. Santé, Pharmacologie et Biotechnologie
+        if any(w in texte_global for w in ["sante", "pharma", "medicament", "galenique", "medical"]):
+            scores_profil["parcours-pip"] += 1.4
+            scores_profil["parcours-iaa"] += 0.6
+            raisons_parcours["parcours-pip"].append("Adéquation directe avec votre intérêt pour la santé et l'industrie pharmaceutique")
+            raisons_parcours["parcours-iaa"].append("Synergie entre sciences de la santé et biochimie alimentaire")
+        if any(w in texte_global for w in ["biologie", "agroalimentaire", "alimentaire", "haccp", "nutrition"]):
+            scores_profil["parcours-iaa"] += 1.3
+            raisons_parcours["parcours-iaa"].append("Cohérence avec les sciences biologiques et la transformation alimentaire")
 
-        # Inférence ML avec le modèle ExtraTrees si disponible
-        if self.modele and self.featuriseur:
+        # 2. Écologie, Environnement et Agronomie
+        if any(w in texte_global for w in ["ecologie", "environnement", "biodiversite", "parc", "nature"]):
+            scores_profil["parcours-tee"] += 1.4
+            scores_profil["parcours-aee"] += 0.6
+            raisons_parcours["parcours-tee"].append("Forte adéquation avec votre intérêt pour l'écologie et l'environnement durable")
+            raisons_parcours["parcours-aee"].append("Lien direct entre préservation écologique et agronomie durable")
+        if any(w in texte_global for w in ["agri", "agriculture", "elevage", "rural", "sol", "zootechnie"]):
+            scores_profil["parcours-aee"] += 1.4
+            raisons_parcours["parcours-aee"].append("Correspondance directe avec la gestion des productions agricoles et l'élevage")
+
+        # 3. Informatique, Logiciel, Données et IA
+        if any(w in texte_global for w in ["donnee", "data", "stat", "econometrie", "predicti"]):
+            scores_profil["parcours-isaia"] += 1.5
+            raisons_parcours["parcours-isaia"].append("Excellente synergie avec l'analyse de données statistiques et le machine learning")
+        if any(w in texte_global for w in ["logiciel", "developpement", "web", "programmation", "algo", "application"]):
+            scores_profil["parcours-igglia"] += 1.3
+            raisons_parcours["parcours-igglia"].append("Alignement avec vos aptitudes en génie logiciel et développement d'applications")
+        if any(w in texte_global for w in ["telecom", "multimedia", "reseau", "cloud"]):
+            scores_profil["parcours-imticia"] += 1.3
+            raisons_parcours["parcours-imticia"].append("Adéquation avec les technologies web, cloud et télécommunications")
+        if any(w in texte_global for w in ["info", "intelligence artificielle", "ia"]) and not any(w in texte_global for w in ["donnee", "data", "stat"]):
+            scores_profil["parcours-igglia"] += 0.8
+            scores_profil["parcours-imticia"] += 0.5
+            scores_profil["parcours-esiia"] += 0.4
+            scores_profil["parcours-isaia"] += 0.4
+
+        # 4. Électronique, Robotique, Automatisme et Mécanique
+        if any(w in texte_global for w in ["electro", "embarque", "robot", "circuit", "microcontroleur", "iot", "materiel"]):
+            scores_profil["parcours-esiia"] += 1.4
+            raisons_parcours["parcours-esiia"].append("Alignement direct avec les systèmes électroniques et l'informatique embarquée")
+        if any(w in texte_global for w in ["mecanique", "automatisme", "maintenance", "usine", "gmao"]):
+            scores_profil["parcours-emii"] += 1.4
+            raisons_parcours["parcours-emii"].append("Correspondance avec l'électromécanique et la maintenance industrielle")
+
+        # 5. BTP, Génie Civil et Architecture
+        if any(w in texte_global for w in ["batiment", "architecture", "genie civil", "construction", "chantier", "ouvrage", "btp", "dessin technique", "plans", "structure", "design"]):
+            scores_profil["parcours-gca"] += 1.4
+            raisons_parcours["parcours-gca"].append("Forte cohérence avec les métiers du bâtiment, travaux publics et architecture")
+
+        # 6. Chimie, Mines et Pétrole
+        if any(w in texte_global for w in ["chimie", "mine", "petrole", "raffinage", "qhse"]):
+            scores_profil["parcours-icmp"] += 1.4
+            raisons_parcours["parcours-icmp"].append("Spécialisation adaptée aux procédés chimiques, miniers et pétroliers")
+
+        # 7. Management, Affaires, Commerce et Finance
+        if any(w in texte_global for w in ["commerce", "vente", "marketing", "negociation", "client"]):
+            scores_profil["parcours-caa"] += 1.4
+            raisons_parcours["parcours-caa"].append("Orientation ciblée vers la stratégie commerciale et le développement des ventes")
+        if any(w in texte_global for w in ["manage", "management", "projet", "organisation", "planification", "strategie"]):
+            scores_profil["parcours-emp"] += 1.3
+            raisons_parcours["parcours-emp"].append("Correspondance avec le management stratégique et la conduite de projet")
+        if any(w in texte_global for w in ["compta", "comptabilite", "audit", "fiscalite", "tresorerie", "finance", "banque"]):
+            scores_profil["parcours-fic"] += 1.4
+            raisons_parcours["parcours-fic"].append("Adéquation avec la gestion comptable, l'audit et la finance d'entreprise")
+        if any(w in texte_global for w in ["droit", "juridique", "contrat", "contentieux", "loi"]):
+            scores_profil["parcours-dtja"] += 1.4
+            raisons_parcours["parcours-dtja"].append("Forte affinité avec le droit des affaires et le conseil juridique")
+
+        # 8. Tourisme et Hôtellerie
+        if any(w in texte_global for w in ["tourisme", "hotel", "hotellerie", "hebergement", "restauration", "voyage", "accueil"]):
+            scores_profil["parcours-teh"] += 1.4
+            scores_profil["parcours-tee"] += 0.8
+            raisons_parcours["parcours-teh"].append("Adéquation avec le management hôtelier et les services d'hébergement")
+
+        # Inférence ML avec le modèle ExtraTrees si des données textuelles significatives sont présentes
+        if self.modele and self.featuriseur and texte_global:
             try:
                 row_dict = {
-                    "matieres_preferees": matieres_str or "mathematiques, algorithmique",
+                    "matieres_preferees": matieres_clean or "general",
                     "moyenne_scolaire": float(profil_candidat.get("moyenne_scolaire", 14.0)),
-                    "centres_interet": centres_str or "informatique",
-                    "projets": ", ".join(profil_candidat.get("projets", [])) if isinstance(profil_candidat.get("projets"), list) else str(profil_candidat.get("projets", "")),
+                    "centres_interet": centres_clean or "polytechnique",
+                    "projets": projets_clean or "projet_academique",
                     "preferences_professionnelles": str(profil_candidat.get("preferences_professionnelles", "salariat")),
                     "environnement_travail": str(profil_candidat.get("environnement_travail", "hybride")),
                 }
@@ -183,7 +217,7 @@ class BoiteAOutilsAgent:
 
                 for cls, pr in zip(classes, probas):
                     if cls in scores_profil:
-                        scores_profil[cls] += float(pr) * 0.8
+                        scores_profil[cls] += float(pr) * 0.4
             except Exception:
                 pass
 
@@ -216,15 +250,16 @@ class BoiteAOutilsAgent:
 
         for code_parcours, score_val in top_classes:
             nom_complet = noms_parcours.get(code_parcours, code_parcours)
-            pertinence = int(min(95, max(45, round(score_val * 60 + 35))))
+            pertinence = int(min(95, max(45, round(score_val * 40 + 40))))
 
-            pourquoi = []
-            if centres_str:
-                pourquoi.append(f"Forte adéquation avec vos centres d'intérêt ({centres_str})")
-            if matieres_str:
-                pourquoi.append(f"Cohérence avec vos matières déclarées ({matieres_str})")
+            pourquoi = raisons_parcours.get(code_parcours, [])
             if not pourquoi:
-                pourquoi.append("Profil général compatible avec les objectifs de formation")
+                if centres_str:
+                    pourquoi.append(f"Compatibilité avec vos centres d'intérêt généraux ({centres_str})")
+                elif matieres_str:
+                    pourquoi.append(f"Cohérence avec vos matières déclarées ({matieres_str})")
+                else:
+                    pourquoi.append("Profil général compatible avec les objectifs de la formation")
 
             # Récupérer données officielles du RAG
             rag_info = self.rag.rechercher(nom_complet, top_k=1)
@@ -268,6 +303,8 @@ class BoiteAOutilsAgent:
             "sources": sources_utilisees,
             "incertitude_globale": "Modérée",
         }
+
+
 
     # --- Outil 3 : Vérification des prérequis d'admission ---
     def verifier_prerequis(self, mention_ou_parcours: str, serie_bacc: str) -> Dict[str, Any]:

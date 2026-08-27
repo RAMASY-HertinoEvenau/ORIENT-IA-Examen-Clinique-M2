@@ -16,25 +16,20 @@ function normaliserProfilPayload(profil) {
     }
   });
 
-  if (centresArr.length === 0) {
-    centresArr.push('informatique');
-  }
-
   let matieres = profil.matieres_preferees;
-  if (typeof matieres === 'string') {
+  if (typeof matieres === 'string' && matieres.trim()) {
     matieres = matieres.split(/[,;]/).map(s => s.trim()).filter(Boolean);
-  }
-  if (!Array.isArray(matieres) || matieres.length === 0) {
-    matieres = ["informatique", "mathematiques"];
+  } else if (!Array.isArray(matieres)) {
+    matieres = [];
   }
 
-  const competencesObj = {
-    "competence-techniques-informatiques-gestion": 4,
-    "competence-electronique-systemes": 3
-  };
+  const competencesObj = {};
+  if (typeof profil.competences === 'string' && profil.competences.trim()) {
+    competencesObj["competence_declaree"] = 4;
+  }
 
-  let moyenne = parseFloat(profil.moyenne_scolaire || 15.5);
-  if (isNaN(moyenne)) moyenne = 15.5;
+  let moyenne = parseFloat(profil.moyenne_scolaire || 14.0);
+  if (isNaN(moyenne)) moyenne = 14.0;
 
   return {
     ...profil,
