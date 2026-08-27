@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ORIENT'IA, assistant d'aide à l'orientation pédagogique.">
+  <title>ORIENT'IA | Orientation pédagogique</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Accueil ORIENT'IA">
+        <span class="brand-mark" aria-hidden="true">O</span>
+        <span><strong>ORIENT’IA</strong><small>Assistant d’aide à l’orientation pédagogique</small></span>
+      </a>
+      <div class="connection-status"><span class="status-dot"></span><span id="connection-label">Mode démonstration</span></div>
+    </header>
+
+    <main id="top" class="workspace">
+      <section class="intro-band" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Parcours candidat <span>·</span> Phase exploratoire</p>
+          <h1 id="page-title">Construisons un parcours qui vous ressemble.</h1>
+          <p class="intro-copy">Décrivez vos goûts, vos expériences et votre façon de travailler. ORIENT’IA rassemble ces éléments pour éclairer les parcours qui méritent votre attention.</p>
+        </div>
+        <div class="intro-meta"><span class="meta-number">01</span><span>Profil<br>à compléter</span></div>
+      </section>
+
+      <div class="demo-notice" id="demo-notice" role="status"><strong>Mode démonstration</strong><span>Les réponses affichées proviennent d’un mock local tant que le backend Agent n’est pas connecté.</span></div>
+
+      <div class="content-grid">
+        <section class="panel profile-panel" aria-labelledby="profile-title">
+          <div class="panel-heading">
+            <div><span class="section-index">01</span><h2 id="profile-title">Votre profil</h2></div>
+            <span class="required-note">* requis</span>
+          </div>
+          <p class="panel-lead">Quelques repères suffisent pour commencer. Les informations personnelles ne sont pas nécessaires.</p>
+          <form id="profile-form">
+            <label class="field-label" for="niveau">Niveau d’étude <span>*</span></label>
+            <select id="niveau" name="niveau" required>
+              <option value="">Choisir un niveau</option>
+              <option>Baccalauréat</option><option>Licence</option><option>Master</option><option>En réflexion</option>
+            </select>
+
+            <fieldset class="field-group">
+              <legend class="field-label">Centres d’intérêt</legend>
+              <div class="chip-grid">
+                <label class="choice-chip"><input type="checkbox" name="centres_interet" value="informatique"><span>Informatique</span></label>
+                <label class="choice-chip"><input type="checkbox" name="centres_interet" value="management"><span>Management</span></label>
+                <label class="choice-chip"><input type="checkbox" name="centres_interet" value="écologie"><span>Écologie</span></label>
+                <label class="choice-chip"><input type="checkbox" name="centres_interet" value="santé"><span>Santé</span></label>
+                <label class="choice-chip"><input type="checkbox" name="centres_interet" value="design"><span>Design</span></label>
+                <label class="choice-chip"><input type="checkbox" name="centres_interet" value="agriculture"><span>Agriculture</span></label>
+              </div>
+            </fieldset>
+
+            <label class="field-label" for="matieres">Matières préférées</label>
+            <input id="matieres" name="matieres_preferees" type="text" placeholder="Ex. mathématiques, programmation">
+
+            <label class="field-label" for="competences">Compétences</label>
+            <textarea id="competences" name="competences" rows="2" placeholder="Ce que vous savez déjà faire..."></textarea>
+
+            <label class="field-label" for="projets">Projets</label>
+            <textarea id="projets" name="projets" rows="2" placeholder="Projet scolaire, associatif ou personnel..."></textarea>
+
+            <div class="split-fields">
+              <div><label class="field-label" for="preference">Préférence professionnelle</label><select id="preference" name="preferences_professionnelles"><option value="">Choisir</option><option>Entrepreneuriat</option><option>Salariat</option><option>Recherche</option><option>Enseignement</option><option>Fonction publique</option></select></div>
+              <div><label class="field-label" for="environnement">Environnement de travail</label><select id="environnement" name="environnement_travail"><option value="">Choisir</option><option>Bureau</option><option>Terrain</option><option>Télétravail</option><option>Hybride</option></select></div>
+            </div>
+
+            <button class="primary-button" type="submit"><span>Analyser mon profil</span><span class="button-arrow" aria-hidden="true">→</span></button>
+          </form>
+          <p class="form-hint"><span aria-hidden="true">◆</span> Votre profil reste modifiable à tout moment.</p>
+        </section>
+
+        <section class="main-column" aria-label="Conversation et recommandations">
+          <section class="panel conversation-panel" aria-labelledby="conversation-title">
+            <div class="panel-heading"><div><span class="section-index">02</span><h2 id="conversation-title">Conversation</h2></div><span class="live-label"><span class="status-dot"></span> Assistant en ligne</span></div>
+            <div class="chat-log" id="chat-log" aria-live="polite">
+              <div class="message assistant-message"><div class="avatar">O</div><div><span class="message-author">ORIENT’IA <time>maintenant</time></span><p>Bonjour. Décrivez votre profil pour commencer, puis posez-moi toutes vos questions sur les parcours.</p></div></div>
+            </div>
+            <form class="chat-composer" id="chat-form"><label class="sr-only" for="chat-input">Posez votre question</label><input id="chat-input" type="text" placeholder="Posez votre question..." autocomplete="off"><button type="submit" aria-label="Envoyer le message">Envoyer <span aria-hidden="true">↗</span></button></form>
+          </section>
+
+          <section class="panel recommendations-panel" aria-labelledby="recommendations-title">
+            <div class="panel-heading"><div><span class="section-index">03</span><h2 id="recommendations-title">Parcours suggérés</h2></div><span class="result-count" id="result-count">En attente du profil</span></div>
+            <div id="recommendations" class="recommendations-empty"><div class="empty-symbol" aria-hidden="true">✦</div><h3>Décrivez votre profil pour commencer.</h3><p>Vos recommandations apparaîtront ici, accompagnées de leurs sources et de leur niveau d’incertitude.</p></div>
+          </section>
+        </section>
+
+        <aside class="side-column">
+          <section class="panel sources-panel" aria-labelledby="sources-title">
+            <div class="panel-heading"><div><span class="section-index">04</span><h2 id="sources-title">Sources utilisées</h2></div></div>
+            <div id="sources-list" class="sources-list"><p class="muted-text">Les sources retournées par le backend apparaîtront ici.</p></div>
+          </section>
+          <details class="trace-panel" id="trace-panel">
+            <summary><span><span class="section-index">05</span> Voir la traçabilité</span><span class="summary-arrow" aria-hidden="true">⌄</span></summary>
+            <div class="trace-content" id="trace-content"><div class="trace-step"><b>Question utilisateur</b><span>En attente</span></div><div class="trace-line"></div><div class="trace-step"><b>Profil utilisé</b><span>En attente</span></div><div class="trace-line"></div><div class="trace-step"><b>Outils appelés</b><span>En attente</span></div><div class="trace-line"></div><div class="trace-step"><b>Résultats et sources</b><span>En attente</span></div></div>
+          </details>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="footer-warning"><span class="warning-icon" aria-hidden="true">!</span><p><strong>À garder en tête</strong> ORIENT’IA constitue un outil d’aide à l’orientation. Ses recommandations ne remplacent ni l’avis d’un conseiller pédagogique ni une décision officielle d’admission.</p></footer>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
