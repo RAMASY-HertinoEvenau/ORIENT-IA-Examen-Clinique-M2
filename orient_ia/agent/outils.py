@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional
 import joblib
 import pandas as pd
 
+from orient_ia.agent.parcours import extraire_codes_parcours, fiche_depuis_passage
 from orient_ia.rag.moteur_rag import MoteurRAG, SourceReference
 from orient_ia.rag.service import rechercher_documents
 
@@ -340,18 +341,37 @@ class BoiteAOutilsAgent:
             "avertissement": "L'admission définitive reste soumise à la sélection du dossier par l'administration de l'ISPM.",
         }
 
-    # --- Outil 4 : Comparaison entre parcours ---
-    def comparer_parcours(self, parcours_a: str, parcours_b: str) -> Dict[str, Any]:
-        """Compare deux parcours officiels point par point avec sources vérifiables."""
-        res_a = self.rag.rechercher(parcours_a, top_k=1)
-        res_b = self.rag.rechercher(parcours_b, top_k=1)
+    def resoudre_fiche_parcours(self, requete: str) -> Optional[Dict[str, Any]]:
+        """Résout une requête vers une fiche de parcours officielle (alias, sigle ou recherche)."""
+        if not requete or not str(requete).strip():
+            return None
 
-        pass_a = res_a[0].passage if res_a else None
-        pass_b = res_b[0].passage if res_b else None
+        codes = extraire_codes_parcours(requete)
+        if codes:
+            passage = self.rag.obtenir_par_identifiant(codes[0])
+            if passage:
+                return fiche_depuis_passage(passage)
 
-        sources = []
-        for res in (res_a or []) + (res_b or []):
-            for s in res.sources:
+        passage = self.rag.obtenir_par_identifiant(str(requete).strip())
+        if passage and passage.categorie == "parcours":
+            return fiche_depuis_passage(passage)
+
+        resultats = self.rag.rechercher(requete, top_k=6)
+        for res in resultats:
+            if res.passage.categorie == "parcours":
+                return fiche_depuis_passage(res.passage)
+        return None
+
+    def _sources_depuis_fiches(self, *codes: str) -> List[Dict[str, Any]]:
+        sources: List[Dict[str, Any]] = []
+        vues = set()
+        for code in codes:
+            if not code:
+                continue
+            for s in self.rag.get_sources_parcours(code):
+                if s.identifiant in vues:
+                    continue
+                vues.add(s.identifiant)
                 sources.append({
                     "nom": s.titre,
                     "origine": s.origine,
@@ -359,17 +379,33 @@ class BoiteAOutilsAgent:
                     "statut": s.statut,
                     "date": s.date_consultation,
                 })
+        return sources
+
+    # --- Outil 4 : Comparaison entre parcours ---
+    def comparer_parcours(self, parcours_a: str, parcours_b: str) -> Dict[str, Any]:
+        """Compare deux parcours officiels point par point avec sources vérifiables."""
+        fiche_a = self.resoudre_fiche_parcours(parcours_a)
+        fiche_b = self.resoudre_fiche_parcours(parcours_b)
+
+        sources = self._sources_depuis_fiches(
+            (fiche_a or {}).get("code", ""),
+            (fiche_b or {}).get("code", ""),
+        )
+
+        def _bloc(fiche: Optional[Dict[str, Any]], brut: str) -> Dict[str, Any]:
+            if not fiche:
+                return {"titre": brut, "contenu": "Non documenté", "fiche": None}
+            return {
+                "titre": fiche["nom"],
+                "contenu": fiche["contenu"],
+                "fiche": fiche,
+            }
 
         return {
-            "parcours_1": {
-                "titre": pass_a.titre if pass_a else parcours_a,
-                "contenu": pass_a.contenu if pass_a else "Non documenté",
-            },
-            "parcours_2": {
-                "titre": pass_b.titre if pass_b else parcours_b,
-                "contenu": pass_b.contenu if pass_b else "Non documenté",
-            },
+            "parcours_1": _bloc(fiche_a, parcours_a),
+            "parcours_2": _bloc(fiche_b, parcours_b),
             "sources": sources,
+            "statut": "ok" if fiche_a and fiche_b else ("not_found" if not fiche_a and not fiche_b else "incomplet"),
         }
 
 

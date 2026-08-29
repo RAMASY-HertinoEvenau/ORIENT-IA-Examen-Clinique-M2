@@ -9,6 +9,15 @@ from typing import Any, Dict, List, Optional
 
 from orient_ia.agent.garde_fous import AnalyseurSecurite
 from orient_ia.agent.outils import BoiteAOutilsAgent
+from orient_ia.agent.parcours import (
+    PAIRES_PROCHES,
+    detecter_intention,
+    extraire_codes_parcours,
+    extraire_serie_bacc,
+    formater_comparaison,
+    formater_fiche,
+    formater_series,
+)
 from orient_ia.rag.moteur_rag import MoteurRAG
 
 
@@ -76,201 +85,247 @@ class AgentOrientIA:
                 "trace": asdict(trace),
             }
 
-        # 2. Détection d'intentions
-        msg_norm = unicodedata.normalize('NFKD', message).encode('ASCII', 'ignore').decode('utf-8').lower()
+        # 2. Détection d'intentions et des filières citées
+        msg_norm = unicodedata.normalize("NFKD", message).encode("ASCII", "ignore").decode("utf-8").lower()
+        intention = detecter_intention(message)
+        codes = extraire_codes_parcours(message)
+        serie = extraire_serie_bacc(message)
 
-        # A. Questions sur des informations non publiées / absentes du corpus
-        if any(w in msg_norm for w in ["volume horaire", "combien d'heures", "tarif", "frais de scolarite", "prix", "cout", "programme detaille", "par semestre", "passerelle", "bourse", "logement", "dortoir"]):
-            reponse = (
-                "Cette information spécifique (volume horaire précis, tarifs des frais de scolarité, passerelles officielles non déclarées ou syllabus semestriel) "
-                "n'est pas présente dans les sources officielles de l'ISPM actuellement référencées."
-            )
+        def _repondre(
+            reponse: str,
+            etat: str,
+            sources: Optional[List[Dict[str, Any]]] = None,
+            sorties: Optional[Dict[str, Any]] = None,
+            passages: Optional[List[str]] = None,
+            scores: Optional[List[float]] = None,
+        ) -> Dict[str, Any]:
             t_fin = time.perf_counter()
-            trace = TraceExecution(
-                question=message,
-                profil=profil,
-                outils_appeles=["reconnaissance_absence"],
-                passages_recuperes=[],
-                scores_recherche=[],
-                entrees_ml={},
-                sorties_ml={},
-                reponse_finale=reponse,
-                temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
-            )
-            self.historique_traces.append(trace)
-            return {
-                "statut": "information_non_disponible",
-                "etat": "information_non_disponible",
-                "message": reponse,
-                "reponse": reponse,
-                "sources": [],
-                "trace": asdict(trace),
-            }
-
-        # B. Vérification de prérequis / Bacc
-        if any(w in msg_norm for w in ["bacc", "serie", "admissib", "prerequis", "condition d'acces", "inscription"]):
-            outils_appeles.append("verifier_prerequis")
-            # Extraction sommaire de la série
-            serie = "C" if "serie c" in msg_norm or "bacc c" in msg_norm else ("D" if "serie d" in msg_norm or "bacc d" in msg_norm else ("A2" if "serie a" in msg_norm or "bacc a" in msg_norm else "Non précisée"))
-            verif = self.outils.verifier_prerequis(message, serie)
-            t_fin = time.perf_counter()
-            reponse = f"{verif['regle_officielle']}\n\n*Source vérifiée : {verif['source']}*.\n{verif['avertissement']}"
             trace = TraceExecution(
                 question=message,
                 profil=profil,
                 outils_appeles=outils_appeles,
-                passages_recuperes=[verif['regle_officielle']],
-                scores_recherche=[1.0],
-                entrees_ml={"serie": serie, "demande": message},
-                sorties_ml=verif,
+                passages_recuperes=passages or [],
+                scores_recherche=scores or [],
+                entrees_ml=entrees_ml,
+                sorties_ml=sorties or {"intention": intention, "parcours": codes},
                 reponse_finale=reponse,
                 temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
             )
             self.historique_traces.append(trace)
+            statut = "succes" if etat == "succes" else etat
             return {
-                "statut": "succes",
-                "etat": "succes",
+                "statut": statut,
+                "etat": etat,
                 "message": reponse,
                 "reponse": reponse,
-                "sources": [{"titre": "Conditions d'inscription ISPM", "url": "http://www.ispm-edu.com/inscription.php", "statut": "institutionnel"}],
+                "sources": sources or [],
                 "trace": asdict(trace),
             }
 
-        # B. Comparaison explicite entre parcours
-        if any(w in msg_norm for w in ["difference entre", "comparer", "vs", "versus", "ou choisir entre"]):
+        # A. Informations non publiées
+        if any(
+            w in msg_norm
+            for w in [
+                "volume horaire",
+                "combien d'heures",
+                "tarif",
+                "frais de scolarite",
+                "prix",
+                "cout",
+                "programme detaille",
+                "par semestre",
+                "passerelle",
+                "bourse",
+                "logement",
+                "dortoir",
+            ]
+        ):
+            outils_appeles.append("reconnaissance_absence")
+            return _repondre(
+                (
+                    "Cette information précise (volume horaire, tarifs, passerelles ou syllabus semestriel) "
+                    "n'est pas publiée dans les sources officielles ISPM actuellement indexées."
+                ),
+                "information_non_disponible",
+            )
+
+        # B. Comparaison réelle des filières citées (plus de repli Informatique/Électronique)
+        if intention == "comparaison":
             outils_appeles.append("comparer_parcours")
-            p1 = "igglia" if "igglia" in msg_norm else ("isaia" if "isaia" in msg_norm else "Informatique")
-            p2 = "esiia" if "esiia" in msg_norm else ("imticia" if "imticia" in msg_norm else "Électronique")
-            comp = self.outils.comparer_parcours(p1, p2)
-            t_fin = time.perf_counter()
-            reponse = (
-                f"### Comparaison institutionnelle :\n"
-                f"- **{comp['parcours_1']['titre']}** : {comp['parcours_1']['contenu']}\n\n"
-                f"- **{comp['parcours_2']['titre']}** : {comp['parcours_2']['contenu']}\n\n"
-                f"*Toutes les données proviennent des présentations officielles des filières ISPM.*"
+            c1 = codes[0] if len(codes) >= 1 else None
+            c2 = codes[1] if len(codes) >= 2 else PAIRES_PROCHES.get(c1 or "")
+            if not c1:
+                return _repondre(
+                    "Pour comparer, nommez deux filières ISPM (ex. TEE et TEH, IGGLIA et ISAIA, GCA et EMII).",
+                    "demande_precision",
+                )
+            if not c2:
+                return _repondre(
+                    f"J'ai identifié **{c1.replace('parcours-', '').upper()}**. "
+                    "Indiquez la seconde filière à comparer.",
+                    "demande_precision",
+                )
+            comp = self.outils.comparer_parcours(c1, c2)
+            f1 = comp["parcours_1"].get("fiche")
+            f2 = comp["parcours_2"].get("fiche")
+            if not f1 or not f2:
+                return _repondre(
+                    "Je n'ai pas trouvé les deux filières dans le corpus officiel ISPM. "
+                    "Vérifiez les sigles (TEE, TEH, IGGLIA, GCA, etc.).",
+                    "information_non_disponible",
+                    sources=comp.get("sources", []),
+                    sorties=comp,
+                )
+            return _repondre(
+                formater_comparaison(f1, f2),
+                "succes",
+                sources=comp.get("sources", []),
+                sorties=comp,
+                passages=[f1.get("contenu", ""), f2.get("contenu", "")],
+                scores=[1.0, 1.0],
             )
-            trace = TraceExecution(
-                question=message,
-                profil=profil,
-                outils_appeles=outils_appeles,
-                passages_recuperes=[comp['parcours_1']['contenu'], comp['parcours_2']['contenu']],
-                scores_recherche=[1.0, 1.0],
-                entrees_ml={"p1": p1, "p2": p2},
-                sorties_ml=comp,
-                reponse_finale=reponse,
-                temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
-            )
-            self.historique_traces.append(trace)
-            return {
-                "statut": "succes",
-                "etat": "succes",
-                "message": reponse,
-                "reponse": reponse,
-                "sources": comp["sources"],
-                "trace": asdict(trace),
-            }
 
-        # C. Question ambiguë / qualitative générale
-        if any(w in msg_norm for w in ["meilleure filiere", "meilleur parcours", "meilleure formation", "classement", "laquelle est la meilleure"]):
-            reponse = "Il n'y a pas de 'meilleure filière' absolue à l'ISPM. Le choix optimal dépend entièrement de votre profil, de votre série de Baccalauréat et de vos objectifs. Veuillez préciser vos centres d'intérêt pour que je puisse vous guider."
-            t_fin = time.perf_counter()
-            trace = TraceExecution(
-                question=message,
-                profil=profil,
-                outils_appeles=["gestion_ambiguite"],
-                passages_recuperes=[],
-                scores_recherche=[],
-                entrees_ml={},
-                sorties_ml={},
-                reponse_finale=reponse,
-                temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
+        # C. Prérequis / série de bac — réponse ciblée, pas un texte générique Informatique
+        if intention == "prerequis":
+            outils_appeles.append("verifier_prerequis")
+            sources_prereq = [{
+                "titre": "Conditions d'inscription ISPM",
+                "url": "http://www.ispm-edu.com/inscription.php",
+                "statut": "institutionnel",
+            }]
+            if codes:
+                fiche = self.outils.resoudre_fiche_parcours(codes[0])
+                if fiche:
+                    reponse = formater_fiche(fiche, "prerequis")
+                    if serie:
+                        verif = self.outils.verifier_prerequis(fiche["nom"], serie)
+                        reponse += (
+                            f"\n\nPour un **Bac {serie}** : {verif['regle_officielle']} "
+                            f"{verif['avertissement']}"
+                        )
+                    return _repondre(
+                        reponse,
+                        "succes",
+                        sources=sources_prereq,
+                        sorties=fiche,
+                        passages=fiche.get("prerequis", []),
+                    )
+            if serie:
+                return _repondre(
+                    formater_series(serie),
+                    "succes",
+                    sources=sources_prereq,
+                    sorties={"serie": serie},
+                )
+            verif = self.outils.verifier_prerequis(message, "Non précisée")
+            return _repondre(
+                f"{verif['regle_officielle']}\n\n*{verif['avertissement']}*",
+                "succes",
+                sources=sources_prereq,
+                sorties=verif,
             )
-            self.historique_traces.append(trace)
-            return {
-                "statut": "demande_precision",
-                "etat": "demande_precision",
-                "message": reponse,
-                "reponse": reponse,
-                "sources": [],
-                "trace": asdict(trace),
-            }
 
-        # D. Recommandation / Orientation via Profil ML
-        if any(w in msg_norm for w in ["recommand", "orienter", "quel parcours", "que faire", "conseil"]):
+        # D. Ambiguïté qualitative
+        if intention == "ambiguite":
+            outils_appeles.append("gestion_ambiguite")
+            return _repondre(
+                (
+                    "Il n'existe pas de « meilleure filière » à l'ISPM. "
+                    "Le bon choix dépend de vos matières, de votre série de bac et du métier visé. "
+                    "Cochez vos centres d'intérêt à gauche, ou comparez deux sigles (ex. TEE et TEH)."
+                ),
+                "demande_precision",
+            )
+
+        # E. Recommandation de profil
+        if intention == "recommandation":
             outils_appeles.append("analyser_profil_ml")
             rec_res = self.outils.analyser_profil_ml(profil)
             entrees_ml = profil
-            sorties_ml = rec_res
             recs = rec_res.get("recommandations", [])
-            if recs and profil.get("niveau"):
-                lignes = []
-                for r in recs:
-                    lignes.append(f"- **{r['parcours']}** (Indice de pertinence : {r['pertinence']}%) : {r['pourquoi'][0] if r['pourquoi'] else ''}")
-                reponse = "Voici les pistes recommandées à partir de vos centres d'intérêt et matières déclarées :\n\n" + "\n".join(lignes)
-                reponse += "\n\n*Note : Ces recommandations statistiques sont données à titre indicatif et ne remplacent pas les conditions d'admission officielles.*"
+            if recs and (profil.get("niveau") or profil.get("centres_interet") or profil.get("matieres_preferees")):
+                lignes = [
+                    f"- **{r['parcours']}** ({r['pertinence']}%) : {r['pourquoi'][0] if r['pourquoi'] else ''}"
+                    for r in recs
+                ]
+                reponse = (
+                    "Pistes cohérentes avec le profil déclaré :\n\n"
+                    + "\n".join(lignes)
+                    + "\n\n*Repères indicatifs, distincts de la sélection officielle des dossiers.*"
+                )
             else:
-                reponse = "Votre profil est incomplet (niveau d'étude manquant). Veuillez préciser vos matières préférées ou centres d'intérêt pour orienter la recommandation."
-
-            t_fin = time.perf_counter()
-            trace = TraceExecution(
-                question=message,
-                profil=profil,
-                outils_appeles=outils_appeles,
-                passages_recuperes=[r['parcours'] for r in recs],
-                scores_recherche=[r['pertinence'] / 100.0 for r in recs],
-                entrees_ml=entrees_ml,
-                sorties_ml=sorties_ml,
-                reponse_finale=reponse,
-                temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
+                reponse = (
+                    "Pour une recommandation utile, indiquez au moins un centre d'intérêt, "
+                    "des matières fortes, ou lancez « Analyser mon profil »."
+                )
+            return _repondre(
+                reponse,
+                "succes",
+                sources=rec_res.get("sources", []),
+                sorties=rec_res,
+                passages=[r["parcours"] for r in recs],
+                scores=[r["pertinence"] / 100.0 for r in recs],
             )
-            self.historique_traces.append(trace)
-            return {
-                "statut": "succes",
-                "etat": "succes",
-                "message": reponse,
-                "reponse": reponse,
-                "sources": rec_res.get("sources", []),
-                "trace": asdict(trace),
-            }
 
-        # E. Recherche documentaire générale RAG
+        # F. Question ciblée sur une filière identifiée
+        if codes:
+            outils_appeles.append("rechercher_formation")
+            fiche = self.outils.resoudre_fiche_parcours(codes[0])
+            if fiche:
+                intention_fiche = intention if intention in {"metiers", "competences", "matieres", "prerequis"} else "fiche"
+                return _repondre(
+                    formater_fiche(fiche, intention_fiche),
+                    "succes",
+                    sources=self.outils._sources_depuis_fiches(fiche["code"]),
+                    sorties=fiche,
+                    passages=[fiche.get("contenu", "")],
+                    scores=[1.0],
+                )
+
+        # G. Recherche documentaire générale, sans dump de fiches hétérogènes
         outils_appeles.append("rechercher_formation")
-        recherche = self.outils.rechercher_formation(message, top_k=2)
+        recherche = self.outils.rechercher_formation(message, top_k=4)
         passages = recherche.get("passages", [])
         sources = recherche.get("sources", [])
+        parcours_hits = [p for p in passages if p.get("categorie") == "parcours"]
 
-        if passages and passages[0]["score"] >= 0.28:
-            contenus = [f"**{p['titre']}** : {p['contenu']}" for p in passages]
-            reponse = "D'après les documents institutionnels de l'ISPM :\n\n" + "\n\n".join(contenus)
-            etat = "succes"
-        else:
-            reponse = (
-                "Cette information ou filière spécifique n'est pas présente dans les mentions et parcours officiels de l'ISPM actuellement indexés."
+        if parcours_hits and parcours_hits[0]["score"] >= 0.28:
+            fiche = self.outils.resoudre_fiche_parcours(parcours_hits[0].get("titre", message))
+            if fiche:
+                intention_fiche = intention if intention in {"metiers", "competences", "matieres"} else "fiche"
+                reponse = formater_fiche(fiche, intention_fiche)
+            else:
+                p = parcours_hits[0]
+                reponse = f"**{p['titre']}**\n\n{p['contenu']}"
+            return _repondre(
+                reponse,
+                "succes",
+                sources=sources,
+                sorties=recherche,
+                passages=[p["contenu"] for p in parcours_hits[:2]],
+                scores=[p["score"] for p in parcours_hits[:2]],
             )
-            etat = "information_non_disponible"
 
-        t_fin = time.perf_counter()
-        trace = TraceExecution(
-            question=message,
-            profil=profil,
-            outils_appeles=outils_appeles,
-            passages_recuperes=[p["contenu"] for p in passages],
-            scores_recherche=[p["score"] for p in passages],
-            entrees_ml={},
-            sorties_ml=recherche,
-            reponse_finale=reponse,
-            temps_execution_ms=round((t_fin - t_debut) * 1000, 2),
+        if passages and passages[0]["score"] >= 0.35:
+            p = passages[0]
+            return _repondre(
+                f"{p['titre']}\n\n{p['contenu']}",
+                "succes",
+                sources=sources,
+                sorties=recherche,
+                passages=[p["contenu"]],
+                scores=[p["score"]],
+            )
+
+        return _repondre(
+            (
+                "Je n'ai pas trouvé cette information dans les mentions et parcours officiels de l'ISPM. "
+                "Reformulez avec un sigle (IGGLIA, TEE, TEH, GCA…) ou un métier visé."
+            ),
+            "information_non_disponible",
+            sources=sources,
+            sorties=recherche,
         )
-        self.historique_traces.append(trace)
-
-        return {
-            "statut": "succes" if etat == "succes" else "information_non_disponible",
-            "etat": etat,
-            "message": reponse,
-            "reponse": reponse,
-            "sources": sources,
-            "trace": asdict(trace),
-        }
 
 
 # Instance globale partagée

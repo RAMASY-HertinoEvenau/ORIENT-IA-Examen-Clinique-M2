@@ -223,6 +223,10 @@ body::before {
   gap: 10px;
 }
 
+.demo-banner[hidden] {
+  display: none !important;
+}
+
 /* Dashboard Grid (3 colonnes modernes côte à côte) */
 .dashboard-grid {
   display: grid;

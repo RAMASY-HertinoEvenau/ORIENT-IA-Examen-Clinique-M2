@@ -113,6 +113,11 @@ class MoteurRAG:
             id_p = p["identifiant"]
             nom_p = p["nom"]
             comps = [competences_map[c_id]["nom"] for c_id in p.get("competences", []) if c_id in competences_map]
+            comps_desc = [
+                competences_map[c_id].get("description") or competences_map[c_id]["nom"]
+                for c_id in p.get("competences", [])
+                if c_id in competences_map
+            ]
             prereqs = [prerequis_map[pr_id]["description"] for pr_id in p.get("prerequis", []) if pr_id in prerequis_map]
             mets = [metiers_map[m_id]["nom"] for m_id in p.get("metiers", []) if m_id in metiers_map]
             mats = [matieres_map[mat_id]["nom"] for mat_id in p.get("matieres", []) if mat_id in matieres_map]
@@ -142,6 +147,7 @@ class MoteurRAG:
                         "id": id_p,
                         "nom": nom_p,
                         "competences": comps,
+                        "descriptions_competences": comps_desc,
                         "matieres": mats,
                         "prerequis": prereqs,
                         "metiers": mets,
@@ -218,6 +224,11 @@ class MoteurRAG:
             bonus_mots = len(intersection) * 0.15
 
             score_final = score_base + bonus_mots
+            sigle = str(passage.identifiant).replace("parcours-", "").replace("mention-", "")
+            if sigle and re.search(rf"(?<![a-z0-9]){re.escape(sigle)}(?![a-z0-9])", req_norm):
+                score_final += 2.2
+            if passage.categorie == "parcours":
+                score_final += 0.08
             if score_final >= seuil_min:
                 resultats.append((score_final, passage))
 
@@ -231,6 +242,21 @@ class MoteurRAG:
             sorties.append(ResultatRecherche(passage=passage, score=round(score, 4), sources=sources_obj))
 
         return sorties
+
+    def obtenir_par_identifiant(self, identifiant: str) -> Optional[PassageDocumentaire]:
+        cible = identifiant.strip().lower()
+        if not cible:
+            return None
+        if not cible.startswith("parcours-") and not cible.startswith("mention-"):
+            cible_parcours = f"parcours-{cible}"
+        else:
+            cible_parcours = cible
+        for passage in self.passages:
+            if passage.identifiant == cible or passage.identifiant == cible_parcours:
+                return passage
+            if passage.metadata.get("id") in {cible, cible_parcours}:
+                return passage
+        return None
 
     def verifier_presence_formation(self, nom_formation: str) -> bool:
         """Vérifie si une filière ou un parcours existe officiellement dans le corpus ISPM."""
