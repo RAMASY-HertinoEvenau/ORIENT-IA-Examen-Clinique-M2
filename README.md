@@ -80,5 +80,5 @@ python scripts/evaluer_systeme_complet.py
 
 ---
 
-## 5. Mention obligatoire
-> **À garder en tête :** ORIENT’IA constitue un outil d’aide à l’orientation. Ses recommandations ne remplacent ni l’avis d’un conseiller pédagogique ni une décision officielle d’admission.
+## 5. Lien de la Vidéo
+ https://drive.google.com/drive/folders/1dVFUb6pyaOXQ3Obhkc4wPKyqJhFSnZpw?usp=sharing
